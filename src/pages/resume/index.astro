@@ -10,6 +10,7 @@ const bcdLogo = withBase('/images/resume/bcd-logo.png');
 <BaseLayout
 	title="Resume"
 	description="Eli Goldberger — academic background, tutoring experience, software engineering, and technical skills."
+	staticHeader={true}
 >
 	<div class="resume-bg">
 	<div class="paper-stage">
@@ -219,9 +220,10 @@ const bcdLogo = withBase('/images/resume/bcd-logo.png');
 
 <style>
 	.resume-bg {
-		background: #f1f3f5;
-		margin: -2rem calc(-1 * var(--space-md, 1.5rem)) 0;
-		padding: 1.5rem var(--space-md, 1.5rem) 0;
+		background: var(--color-stage);
+		margin: calc(-1 * var(--space-xl)) calc(50% - 50vw) 0;
+		padding: var(--space-lg) var(--space-lg) 0;
+		width: 100vw;
 	}
 
 	.paper-stage {

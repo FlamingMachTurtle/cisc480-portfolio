@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroScene from '../../components/HeroScene.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import InfoPanel from '../../components/InfoPanel.astro';
 import { getCollection } from 'astro:content';
@@ -69,13 +70,19 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 	title="Projects"
 	description="Projects & experiences for the CISC480 Senior Capstone portfolio — capstone build, client automation, mobile apps, service learning, and small-business operations."
 >
+	<HeroScene
+		eyebrow="Eight entries · Capstone first"
+		title="Projects & Experiences"
+		subtitle="A spread of work across CS, interdisciplinary, and outside-CS experiences. SOAR-structured narratives, two failure → learning → change stories, and the CISC480 GreenStep capstone."
+		bgImage="/images/greenstep/greenstep-template-form.png"
+		bgAlt=""
+	/>
+
 	<div class="page-header">
-		<h1>Projects &amp; Experiences</h1>
 		<p class="lead">
-			A spread of work across CS, interdisciplinary, and outside-CS experiences. Each card includes a category badge,
-			keywords, and a figure so the rubric's required elements are visible at a glance. SOAR-structured entries are
-			labeled <em>Situation</em>, <em>Obstacle</em>, <em>Action</em>, <em>Result</em>; the failure → learning → change
-			story is called out under its own heading inside the eBay entry.
+			Each card includes a category badge, keywords, and a figure so the rubric's required elements are visible at a glance.
+			SOAR entries are labeled <em>Situation</em>, <em>Obstacle</em>, <em>Action</em>, <em>Result</em>; the failure →
+			learning → change story is called out under its own heading inside the eBay and capstone entries.
 		</p>
 	</div>
 
@@ -170,11 +177,6 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 <style>
 	.page-header {
 		margin-bottom: var(--space-xl);
-	}
-	.page-header h1 {
-		margin: 0 0 var(--space-xs);
-		font-size: var(--fs-2xl);
-		line-height: var(--lh-tight);
 	}
 	.lead {
 		font-size: var(--fs-base);
