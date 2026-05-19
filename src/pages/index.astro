@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroScene from '../components/HeroScene.astro';
+import TechMarquee from '../components/TechMarquee.astro';
 import { withBase } from '../lib/url';
 
 const headshot = withBase('/images/headshot.jpg');
@@ -115,6 +116,11 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 				))}
 			</dl>
 		</section>
+
+		<!-- ========== TECH STACK MARQUEE ==========
+		     Continuous horizontal lockup of the tools in active rotation.
+		     Pauses on hover. CSS-only — zero client JS. -->
+		<TechMarquee />
 
 		<!-- ========== GOALS ========== -->
 		<section class="goals-section" aria-labelledby="goals-heading">
