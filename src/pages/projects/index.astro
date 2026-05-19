@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import HeroScene from '../../components/HeroScene.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import InfoPanel from '../../components/InfoPanel.astro';
+import ScrollReveal from '../../components/react/ScrollReveal.tsx';
 import { getCollection } from 'astro:content';
 import { withBase } from '../../lib/url';
 
@@ -98,6 +99,7 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 			if (data.failureStory)    nextIndex++;
 			const galleryIndex = String(nextIndex).padStart(2, '0');
 			return (
+				<ScrollReveal client:load amount={0.1}>
 				<div class="project-group">
 					<ProjectCard
 						title={data.title}
@@ -179,6 +181,7 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 						</section>
 					)}
 				</div>
+				</ScrollReveal>
 			);
 		})}
 	</div>

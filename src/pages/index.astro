@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroScene from '../components/HeroScene.astro';
 import TechMarquee from '../components/TechMarquee.astro';
+import ScrollReveal from '../components/react/ScrollReveal.tsx';
 import { withBase } from '../lib/url';
 
 const headshot = withBase('/images/headshot.jpg');
@@ -61,7 +62,9 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 
 		<!-- ========== ABOUT ME (ACM "unique combination") ==========
 		     v2: replaces the two bordered combo-cards with a typographic
-		     two-column comparison and a vertical hairline divider. -->
+		     two-column comparison and a vertical hairline divider.
+		     v3: wrapped in <ScrollReveal> so it fades up on scroll. -->
+		<ScrollReveal client:load>
 		<section class="about-section" id="about" aria-labelledby="about-heading">
 			<h2 id="about-heading">About</h2>
 			<p class="about-question">
@@ -99,10 +102,12 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 				the University of St. Thomas tradition expects.
 			</p>
 		</section>
+		</ScrollReveal>
 
 		<!-- ========== SKILLS ==========
 		     v2: 4-up bordered card grid → definition-list (label | mono
 		     items separated by ·). Hairline rule between rows. -->
+		<ScrollReveal client:load>
 		<section class="skills-section" id="skills" aria-labelledby="skills-heading">
 			<h2 id="skills-heading">Skills</h2>
 			<p class="skills-intro">Pulled from coursework, paid work, and service learning.</p>
@@ -116,13 +121,17 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 				))}
 			</dl>
 		</section>
+		</ScrollReveal>
 
 		<!-- ========== TECH STACK MARQUEE ==========
 		     Continuous horizontal lockup of the tools in active rotation.
 		     Pauses on hover. CSS-only — zero client JS. -->
-		<TechMarquee />
+		<ScrollReveal client:load>
+			<TechMarquee />
+		</ScrollReveal>
 
 		<!-- ========== GOALS ========== -->
+		<ScrollReveal client:load>
 		<section class="goals-section" aria-labelledby="goals-heading">
 			<h2 id="goals-heading">Goals</h2>
 			<ul>
@@ -132,10 +141,12 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 				<li>Keep doing service-learning work alongside the technical work, because the two sharpen each other.</li>
 			</ul>
 		</section>
+		</ScrollReveal>
 
 		<!-- ========== EXPLORE ==========
 		     v2: 3-column CTA tile grid → 3 typographic rows, hairline-
 		     separated, with → arrow leading the title. -->
+		<ScrollReveal client:load>
 		<nav class="explore" aria-label="Explore this site">
 			<span class="explore-kicker">Continue</span>
 			<ul>
@@ -150,11 +161,13 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 				))}
 			</ul>
 		</nav>
+		</ScrollReveal>
 
 		<!-- ========== CREDITS ROW ==========
 		     v2: 3-column stat row → film-credits-style line block.
 		     Mono label hugging left, content in body type, no vertical
 		     dividers. -->
+		<ScrollReveal client:load>
 		<dl class="credits">
 			<div class="credits-row">
 				<dt>Latest</dt>
@@ -169,6 +182,7 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 				<dd>Open to consulting &amp; collaboration — <a href="mailto:eligoldberger5@gmail.com">get in touch</a></dd>
 			</div>
 		</dl>
+		</ScrollReveal>
 	</div>
 </BaseLayout>
 
