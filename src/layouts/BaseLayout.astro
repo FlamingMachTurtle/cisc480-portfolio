@@ -1,15 +1,23 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import { withBase } from '../lib/url';
 
 interface Props {
 	title: string;
 	description?: string;
+	/**
+	 * If true, the sticky header starts opaque (used for pages that
+	 * don't have a HeroScene at the top). Defaults to false so most
+	 * pages render with a transparent header over their dark hero.
+	 */
+	staticHeader?: boolean;
 }
 
 const {
 	title,
 	description = 'Eli Goldberger — CISC480 Senior Capstone individual portfolio. Computer Science major specializing in practical automation, rapid prototyping, and tools that help small businesses and underserved users.',
+	staticHeader = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://flamingmachturtle.github.io');
@@ -32,10 +40,11 @@ const startsWithBase = (segment: string) => pathname.startsWith(withBase(segment
 		<meta property="og:title" content={`${title} | Eli Goldberger — CISC480 Portfolio`} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
+		<ClientRouter />
 	</head>
 	<body>
 		<a href="#main-content" class="skip-link">Skip to main content</a>
-		<header class="site-header" role="banner">
+		<header class:list={['site-header', { 'is-static': staticHeader }]} role="banner" data-static-header={staticHeader ? 'true' : 'false'}>
 			<nav class="nav" aria-label="Main">
 				<a href={withBase('/')} class="nav-home">Eli Goldberger</a>
 				<ul class="nav-links">
@@ -59,5 +68,42 @@ const startsWithBase = (segment: string) => pathname.startsWith(withBase(segment
 			</p>
 			<p class="footer-copy">© {new Date().getFullYear()} Eli Goldberger · CISC480 Senior Capstone, Spring 2026</p>
 		</footer>
+
+		{/*
+		 * Sticky-header opacity controller.
+		 * Toggles `.is-scrolled` once the user has scrolled past the
+		 * top hero band (or 80px if no hero is present). Re-bound on
+		 * every Astro page-load event so it survives view transitions.
+		 */}
+		<script is:inline>
+			(function () {
+				const HEADER_OPAQUE_AT = 'header-opaque-at';
+				let cleanup = null;
+
+				function bind() {
+					if (cleanup) cleanup();
+					const header = document.querySelector('.site-header');
+					if (!header) return;
+					if (header.dataset.staticHeader === 'true') return;
+
+					const hero = document.querySelector('.hero-scene');
+					const threshold = hero
+						? hero.getBoundingClientRect().bottom + window.scrollY - header.offsetHeight - 24
+						: 80;
+
+					const onScroll = () => {
+						if (window.scrollY >= threshold) header.classList.add('is-scrolled');
+						else header.classList.remove('is-scrolled');
+					};
+					onScroll();
+					window.addEventListener('scroll', onScroll, { passive: true });
+					cleanup = () => window.removeEventListener('scroll', onScroll);
+				}
+
+				document.addEventListener('astro:page-load', bind);
+				if (document.readyState !== 'loading') bind();
+				else document.addEventListener('DOMContentLoaded', bind);
+			})();
+		</script>
 	</body>
 </html>
