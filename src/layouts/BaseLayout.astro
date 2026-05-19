@@ -70,6 +70,15 @@ const startsWithBase = (segment: string) => pathname.startsWith(withBase(segment
 		</footer>
 
 		{/*
+		 * GSAP scene layer (body lift + hero parallax) — bundled by
+		 * Astro, runs on every astro:page-load. See
+		 * redesign/animation-options.md for the recipe.
+		 */}
+		<script>
+			import '../scripts/scene';
+		</script>
+
+		{/*
 		 * Sticky-header opacity controller.
 		 * Toggles `.is-scrolled` once the user has scrolled past the
 		 * top hero band (or 80px if no hero is present). Re-bound on
