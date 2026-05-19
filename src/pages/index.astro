@@ -4,6 +4,23 @@ import HeroScene from '../components/HeroScene.astro';
 import { withBase } from '../lib/url';
 
 const headshot = withBase('/images/headshot.jpg');
+
+// Skills, modeled as definition-list rows. Each row renders as
+//   [CATEGORY in small-caps left column] | [items separated by · in mono right column]
+// The previous implementation was a 2x2 grid of bordered "skill-group"
+// cards (a Tailwind-UI tag-set tell — see redesign/audit/ai-tells.md).
+const skills: { label: string; items: string[] }[] = [
+	{ label: 'Languages',                items: ['Python','Java','JavaScript','TypeScript','SQL','Swift','HTML / CSS'] },
+	{ label: 'Frameworks & Tools',       items: ['React','Node.js','Astro','SwiftUI','REST APIs','eBay Trading API','QuickBooks Online','Google Sheets automation','Power BI / DAX','Git / GitHub Actions'] },
+	{ label: 'Professional Competencies',items: ['Client communication','Requirements gathering','Rapid prototyping','QA & release coordination','1:1 & small-group instruction','Inquiry-based coaching','Operations & reporting','Documentation & handoffs'] },
+	{ label: 'Human Languages',          items: ['English (native)','Japanese (intermediate)','Hebrew (basic)'] },
+];
+
+const exploreLinks: { href: string; label: string; desc: string }[] = [
+	{ href: withBase('/projects/'), label: 'Projects & Experiences', desc: '8 entries spanning CS, interdisciplinary, outside-CS, and the CISC480 capstone — with SOAR and failure stories' },
+	{ href: withBase('/resume/'),   label: 'Resume',                 desc: 'Experience, education, and skills — viewable inline or downloadable as PDF' },
+	{ href: withBase('/fun/'),      label: 'Fun Stuff',              desc: 'Hobbies, trade-show photos, and side interests' },
+];
 ---
 
 <BaseLayout
@@ -29,8 +46,10 @@ const headshot = withBase('/images/headshot.jpg');
 				</p>
 				<p class="contact-line">
 					<a href="mailto:eligoldberger5@gmail.com">eligoldberger5@gmail.com</a>
-					· <a href="https://www.linkedin.com/in/eli-goldberger-b3b440212/" target="_blank" rel="noopener">LinkedIn</a>
-					· <a href="https://github.com/FlamingMachTurtle" target="_blank" rel="noopener">GitHub</a>
+					<span aria-hidden="true">·</span>
+					<a href="https://www.linkedin.com/in/eli-goldberger-b3b440212/" target="_blank" rel="noopener">LinkedIn</a>
+					<span aria-hidden="true">·</span>
+					<a href="https://github.com/FlamingMachTurtle" target="_blank" rel="noopener">GitHub</a>
 				</p>
 				<p class="course-context">
 					Individual portfolio + signature work reflection. The full reflection lives in this repo's
@@ -39,16 +58,20 @@ const headshot = withBase('/images/headshot.jpg');
 			</div>
 		</header>
 
-		<!-- ========== ABOUT ME (ACM "unique combination") ========== -->
+		<!-- ========== ABOUT ME (ACM "unique combination") ==========
+		     v2: replaces the two bordered combo-cards with a typographic
+		     two-column comparison and a vertical hairline divider. -->
 		<section class="about-section" id="about" aria-labelledby="about-heading">
-			<h2 id="about-heading">About Me</h2>
+			<h2 id="about-heading">About</h2>
 			<p class="about-question">
-				<strong>Why should you hire me?</strong> Because I bring a unique combination of CS and liberal-arts strengths
+				<strong>Why should you hire me?</strong>
+				Because I bring a unique combination of CS and liberal-arts strengths
 				that's pretty hard to find together in one person.
 			</p>
+
 			<div class="combination">
-				<div class="combo-card">
-					<span class="combo-label">CS strengths</span>
+				<div class="combo">
+					<span class="combo__label">CS strengths</span>
 					<ul>
 						<li>Rapid Python automation against real REST/API constraints (rate limits, auth, idempotency).</li>
 						<li>End-to-end shipping of production tools under tight client deadlines.</li>
@@ -56,8 +79,8 @@ const headshot = withBase('/images/headshot.jpg');
 						<li>Image processing pipelines, scheduled services, and small-business data workflows.</li>
 					</ul>
 				</div>
-				<div class="combo-card">
-					<span class="combo-label">Liberal-arts strengths</span>
+				<div class="combo">
+					<span class="combo__label">Liberal-arts strengths</span>
 					<ul>
 						<li>1:1 and small-group instruction through AVID — I can debug an API and then explain it to a 7th-grader.</li>
 						<li>Intermediate Japanese and basic Hebrew — comfort sitting with ambiguity and other ways of thinking.</li>
@@ -66,50 +89,31 @@ const headshot = withBase('/images/headshot.jpg');
 					</ul>
 				</div>
 			</div>
+
 			<p class="about-summary">
-				<strong>Net-net:</strong> I'm a developer who can talk to non-technical clients without losing them,
+				<span class="kicker mono">Net-net</span>
+				I'm a developer who can talk to non-technical clients without losing them,
 				ship reliable automation that respects real-world constraints, and treat the people I build for —
 				whether they're store owners, middle-school students, or future patients — with the kind of care
 				the University of St. Thomas tradition expects.
 			</p>
 		</section>
 
-		<!-- ========== SKILLS ========== -->
+		<!-- ========== SKILLS ==========
+		     v2: 4-up bordered card grid → definition-list (label | mono
+		     items separated by ·). Hairline rule between rows. -->
 		<section class="skills-section" id="skills" aria-labelledby="skills-heading">
 			<h2 id="skills-heading">Skills</h2>
-			<p class="skills-intro">Salient technical skills and professional competencies — pulled from coursework, paid work, and service learning.</p>
-			<div class="skills-grid">
-				<div class="skill-group">
-					<h3>Languages</h3>
-					<ul class="pill-list">
-						<li>Python</li><li>Java</li><li>JavaScript</li><li>TypeScript</li>
-						<li>SQL</li><li>Swift</li><li>HTML / CSS</li>
-					</ul>
-				</div>
-				<div class="skill-group">
-					<h3>Frameworks &amp; Tools</h3>
-					<ul class="pill-list">
-						<li>React</li><li>Node.js</li><li>Astro</li><li>SwiftUI</li>
-						<li>REST APIs</li><li>eBay Trading API</li><li>QuickBooks Online</li>
-						<li>Google Sheets automation</li><li>Power BI / DAX</li><li>Git / GitHub Actions</li>
-					</ul>
-				</div>
-				<div class="skill-group">
-					<h3>Professional Competencies</h3>
-					<ul class="pill-list">
-						<li>Client communication</li><li>Requirements gathering</li>
-						<li>Rapid prototyping</li><li>QA &amp; release coordination</li>
-						<li>1:1 &amp; small-group instruction</li><li>Inquiry-based coaching</li>
-						<li>Operations &amp; reporting</li><li>Documentation &amp; handoffs</li>
-					</ul>
-				</div>
-				<div class="skill-group">
-					<h3>Human Languages</h3>
-					<ul class="pill-list">
-						<li>English (native)</li><li>Japanese (intermediate)</li><li>Hebrew (basic)</li>
-					</ul>
-				</div>
-			</div>
+			<p class="skills-intro">Pulled from coursework, paid work, and service learning.</p>
+
+			<dl class="skills-list">
+				{skills.map(({ label, items }) => (
+					<div class="skills-row">
+						<dt>{label}</dt>
+						<dd class="mono">{items.join('  ·  ')}</dd>
+					</div>
+				))}
+			</dl>
 		</section>
 
 		<!-- ========== GOALS ========== -->
@@ -123,39 +127,42 @@ const headshot = withBase('/images/headshot.jpg');
 			</ul>
 		</section>
 
-		<!-- ========== EXPLORE ========== -->
+		<!-- ========== EXPLORE ==========
+		     v2: 3-column CTA tile grid → 3 typographic rows, hairline-
+		     separated, with → arrow leading the title. -->
 		<nav class="explore" aria-label="Explore this site">
-			<a href={withBase('/projects/')} class="explore-item">
-				<span class="explore-label">Projects &amp; Experiences</span>
-				<span class="explore-desc">8 entries spanning CS, interdisciplinary, outside-CS, and the CISC480 capstone — with SOAR and failure stories</span>
-			</a>
-			<a href={withBase('/resume/')} class="explore-item">
-				<span class="explore-label">Resume</span>
-				<span class="explore-desc">Experience, education, and skills — viewable inline or downloadable as PDF</span>
-			</a>
-			<a href={withBase('/fun/')} class="explore-item">
-				<span class="explore-label">Fun Stuff</span>
-				<span class="explore-desc">Hobbies, trade-show photos, and side interests</span>
-			</a>
+			<span class="explore-kicker">Continue</span>
+			<ul>
+				{exploreLinks.map(({ href, label, desc }) => (
+					<li>
+						<a href={href}>
+							<span class="explore-arrow" aria-hidden="true">→</span>
+							<span class="explore-label">{label}</span>
+							<span class="explore-desc">{desc}</span>
+						</a>
+					</li>
+				))}
+			</ul>
 		</nav>
 
-		<!-- ========== STAT ROW ========== -->
-		<div class="stat-row" role="list">
-			<div class="stat" role="listitem">
-				<span class="stat-label">Latest Work</span>
-				<span class="stat-value">eBay pipeline — 100% production success rate</span>
+		<!-- ========== CREDITS ROW ==========
+		     v2: 3-column stat row → film-credits-style line block.
+		     Mono label hugging left, content in body type, no vertical
+		     dividers. -->
+		<dl class="credits">
+			<div class="credits-row">
+				<dt>Latest</dt>
+				<dd>eBay pipeline — 100% production success rate</dd>
 			</div>
-			<div class="stat-divider" aria-hidden="true"></div>
-			<div class="stat" role="listitem">
-				<span class="stat-label">Focus</span>
-				<span class="stat-value">Practical, ethical automation for small businesses &amp; underserved users</span>
+			<div class="credits-row">
+				<dt>Focus</dt>
+				<dd>Practical, ethical automation for small businesses &amp; underserved users</dd>
 			</div>
-			<div class="stat-divider" aria-hidden="true"></div>
-			<div class="stat" role="listitem">
-				<span class="stat-label">Availability</span>
-				<span class="stat-value">Open to consulting &amp; collaboration — <a href="mailto:eligoldberger5@gmail.com">get in touch</a></span>
+			<div class="credits-row">
+				<dt>Available</dt>
+				<dd>Open to consulting &amp; collaboration — <a href="mailto:eligoldberger5@gmail.com">get in touch</a></dd>
 			</div>
-		</div>
+		</dl>
 	</div>
 </BaseLayout>
 
@@ -166,20 +173,14 @@ const headshot = withBase('/images/headshot.jpg');
 		padding: 0 var(--space-lg) var(--space-xl);
 	}
 
-	/* The pink .capstone-banner is GONE. Course-context lives in the
-	   HeroScene eyebrow above and the .course-context line below. */
-
 	.hero {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-xl);
 		align-items: center;
-		margin-bottom: var(--space-2xl);
+		margin-bottom: var(--space-3xl);
 	}
-
-	.headshot-frame {
-		flex-shrink: 0;
-	}
+	.headshot-frame { flex-shrink: 0; }
 	.headshot-frame img {
 		width: 9rem;
 		height: 9rem;
@@ -188,11 +189,7 @@ const headshot = withBase('/images/headshot.jpg');
 		object-fit: cover;
 		box-shadow: 0 0 0 3px var(--color-border), 0 0 0 5px var(--color-bg), var(--shadow-2);
 	}
-
-	.hero-text {
-		flex: 1;
-		min-width: 0;
-	}
+	.hero-text { flex: 1; min-width: 0; }
 	.lead {
 		font-size: var(--fs-md);
 		line-height: var(--lh-snug);
@@ -203,6 +200,10 @@ const headshot = withBase('/images/headshot.jpg');
 		margin: 0 0 var(--space-xs);
 		font-size: var(--fs-sm);
 		color: var(--color-text-muted);
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-xs);
+		align-items: baseline;
 	}
 	.course-context {
 		margin: 0;
@@ -211,218 +212,293 @@ const headshot = withBase('/images/headshot.jpg');
 		line-height: var(--lh-snug);
 	}
 
-	/* About Me */
-	.about-section {
-		margin-bottom: var(--space-2xl);
-	}
-	.about-section h2 {
-		margin: 0 0 var(--space-xs);
-		font-size: var(--fs-xl);
+	/* ===== Section heads (shared across home) =====
+	   Single typographic moment — no kicker pill, no number prefix. */
+	.about-section h2,
+	.skills-section h2,
+	.goals-section h2 {
+		margin: 0 0 var(--space-2xs);
+		font-size: var(--fs-2xl);
+		font-weight: 600;
 		line-height: var(--lh-tight);
+		letter-spacing: -0.02em;
 	}
+
+	/* ===== About =====
+	   Heading + question lead + two-column comparison + summary.
+	   No card chrome anywhere. The vertical hairline does the
+	   visual separation that the borders used to do. */
+	.about-section { margin-bottom: var(--space-3xl); }
 	.about-question {
-		font-size: var(--fs-base);
+		font-size: var(--fs-md);
 		line-height: var(--lh-snug);
-		margin: 0 0 var(--space-md);
+		margin: 0 0 var(--space-xl);
 		color: var(--color-text-muted);
+		max-width: 56rem;
 	}
-	.about-question strong { color: var(--color-text); }
+	.about-question strong {
+		color: var(--color-text);
+		font-weight: 600;
+	}
 
 	.combination {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: var(--space-md);
+		column-gap: var(--space-2xl);
+		row-gap: var(--space-lg);
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--color-border);
+	}
+	@media (min-width: 641px) {
+		.combination > .combo:first-child {
+			padding-right: var(--space-2xl);
+			border-right: 1px solid var(--color-border);
+		}
+		.combination > .combo:last-child {
+			padding-left: var(--space-2xl);
+			margin-left: calc(-1 * var(--space-2xl));
+		}
 	}
 	@media (max-width: 640px) {
-		.combination { grid-template-columns: 1fr; }
+		.combination { grid-template-columns: 1fr; gap: var(--space-md); }
 	}
-	.combo-card {
-		padding: var(--space-md) var(--space-lg);
-		background: var(--color-surface);
-		border-radius: var(--radius-md);
-		border-left: 3px solid var(--color-border-strong);
-	}
-	.combo-label {
+	.combo__label {
 		display: block;
 		font-size: var(--fs-2xs);
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-caps);
-		color: var(--color-text-muted);
-		margin-bottom: var(--space-xs);
+		color: var(--color-text);
+		margin-bottom: var(--space-sm);
 	}
-	.combo-card ul {
+	.combo ul {
 		margin: 0;
-		padding-left: 1.1rem;
+		padding: 0;
+		list-style: none;
 		font-size: var(--fs-sm);
 		line-height: var(--lh-snug);
-		color: var(--color-text);
-	}
-	.combo-card li { margin-bottom: var(--space-2xs); }
-	.combo-card li:last-child { margin-bottom: 0; }
-	.about-summary {
-		margin: var(--space-md) 0 0;
-		font-size: var(--fs-sm);
-		line-height: var(--lh-base);
 		color: var(--color-text-muted);
 	}
-	.about-summary strong { color: var(--color-text); }
+	.combo li {
+		margin-bottom: var(--space-xs);
+		padding-left: 0.9rem;
+		position: relative;
+	}
+	.combo li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.55em;
+		width: 0.4rem;
+		height: 1px;
+		background: var(--color-border-strong);
+	}
+	.combo li:last-child { margin-bottom: 0; }
 
-	/* Skills */
-	.skills-section {
-		margin-bottom: var(--space-2xl);
+	.about-summary {
+		margin: var(--space-xl) 0 0;
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--color-border);
+		font-size: var(--fs-sm);
+		line-height: var(--lh-base);
+		color: var(--color-text);
 	}
-	.skills-section h2 {
-		margin: 0 0 var(--space-xs);
-		font-size: var(--fs-xl);
-		line-height: var(--lh-tight);
+	.kicker {
+		display: inline;
+		font-size: var(--fs-2xs);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-caps);
+		color: var(--color-text-subtle);
+		margin-right: var(--space-xs);
 	}
+	.kicker::after {
+		content: '—';
+		margin-left: var(--space-xs);
+		color: var(--color-text-subtle);
+		font-family: var(--font-sans);
+	}
+
+	/* ===== Skills =====
+	   Definition-list. Each row = small-caps label hugging left
+	   in a fixed-width column + mono inline items separated by
+	   middle-dots. Hairline rule between rows. No card chrome. */
+	.skills-section { margin-bottom: var(--space-3xl); }
 	.skills-intro {
 		font-size: var(--fs-sm);
 		color: var(--color-text-muted);
-		margin: 0 0 var(--space-md);
+		margin: 0 0 var(--space-xl);
+		max-width: 48rem;
 	}
-	.skills-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: var(--space-md);
-	}
-	@media (max-width: 640px) {
-		.skills-grid { grid-template-columns: 1fr; }
-	}
-	.skill-group {
-		padding: var(--space-md) var(--space-lg);
-		background: var(--color-surface-raised);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-	}
-	.skill-group h3 {
-		margin: 0 0 var(--space-xs);
-		font-size: var(--fs-2xs);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-caps);
-		color: var(--color-text);
-	}
-	.pill-list {
-		list-style: none;
+	.skills-list {
 		margin: 0;
 		padding: 0;
 		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2xs);
-	}
-	.pill-list li {
-		font-size: var(--fs-xs);
-		padding: 0.2rem 0.6rem;
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-pill);
-		color: var(--color-text-muted);
-		white-space: nowrap;
-	}
-
-	/* Goals */
-	.goals-section {
-		margin-bottom: var(--space-2xl);
-	}
-	.goals-section h2 {
-		margin: 0 0 var(--space-xs);
-		font-size: var(--fs-xl);
-		line-height: var(--lh-tight);
-	}
-	.goals-section ul {
-		margin: 0;
-		padding-left: var(--space-lg);
-		line-height: var(--lh-base);
-	}
-	.goals-section li {
-		margin-bottom: var(--space-2xs);
-		color: var(--color-text);
-	}
-
-	/* Explore */
-	.explore {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1px;
-		background: var(--color-border);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-		overflow: hidden;
-		margin-bottom: var(--space-2xl);
-	}
-	.explore-item {
-		display: flex;
 		flex-direction: column;
-		gap: var(--space-2xs);
-		padding: var(--space-md) var(--space-lg);
-		background: var(--color-surface);
-		text-decoration: none;
-		transition: background 0.18s ease;
 	}
-	.explore-item:hover {
-		background: var(--color-surface-raised);
-	}
-	.explore-label {
-		font-size: var(--fs-sm);
-		font-weight: 700;
-		color: var(--color-text);
-	}
-	.explore-desc {
-		font-size: var(--fs-xs);
-		line-height: var(--lh-snug);
-		color: var(--color-text-muted);
-	}
-	@media (max-width: 640px) {
-		.explore { grid-template-columns: 1fr; }
-	}
-
-	/* Stat row */
-	.stat-row {
-		display: flex;
-		align-items: stretch;
-		gap: 0;
-		padding-top: var(--space-lg);
+	.skills-row {
+		display: grid;
+		grid-template-columns: 12rem 1fr;
+		gap: var(--space-xl);
+		padding: var(--space-md) 0;
 		border-top: 1px solid var(--color-border);
 	}
-	.stat {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2xs);
-		padding: 0 var(--space-xl) 0 0;
+	.skills-row:last-child { border-bottom: 1px solid var(--color-border); }
+	.skills-row dt {
+		margin: 0;
+		font-size: var(--fs-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-caps);
+		color: var(--color-text);
+		padding-top: 2px;
 	}
-	.stat:last-of-type { padding-right: 0; }
-	.stat-label {
+	.skills-row dd {
+		margin: 0;
+		font-size: var(--fs-sm);
+		line-height: var(--lh-base);
+		color: var(--color-text-muted);
+		font-feature-settings: "tnum" on, "ss01" on, "ss03" on;
+	}
+	@media (max-width: 640px) {
+		.skills-row {
+			grid-template-columns: 1fr;
+			gap: var(--space-2xs);
+		}
+	}
+
+	/* ===== Goals ===== */
+	.goals-section { margin-bottom: var(--space-3xl); }
+	.goals-section ul {
+		margin: var(--space-md) 0 0;
+		padding-left: var(--space-md);
+		line-height: var(--lh-base);
+		list-style: none;
+	}
+	.goals-section li {
+		margin-bottom: var(--space-xs);
+		color: var(--color-text);
+		padding-left: 0.9rem;
+		position: relative;
+	}
+	.goals-section li::before {
+		content: '';
+		position: absolute;
+		left: -0.9rem;
+		top: 0.6em;
+		width: 0.5rem;
+		height: 1px;
+		background: var(--color-border-strong);
+	}
+
+	/* ===== Explore =====
+	   3 hairline-separated rows. Each row: arrow + label + dimmer
+	   description. Whole row is the link target. */
+	.explore {
+		margin-bottom: var(--space-3xl);
+	}
+	.explore-kicker {
+		display: block;
 		font-size: var(--fs-2xs);
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-caps);
 		color: var(--color-text-subtle);
+		margin-bottom: var(--space-xs);
 	}
-	.stat-value {
-		font-size: var(--fs-sm);
+	.explore ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.explore li {
+		border-top: 1px solid var(--color-border);
+	}
+	.explore li:last-child { border-bottom: 1px solid var(--color-border); }
+	.explore a {
+		display: grid;
+		grid-template-columns: 1.5rem auto 1fr;
+		column-gap: var(--space-sm);
+		align-items: baseline;
+		padding: var(--space-md) 0;
 		color: var(--color-text);
-		line-height: var(--lh-snug);
+		text-decoration: none;
+		transition: color 0.18s ease;
 	}
-	.stat-value a {
+	.explore a:hover { color: var(--color-accent); }
+	.explore a:hover .explore-arrow { transform: translateX(2px); }
+	.explore-arrow {
+		font-family: var(--font-mono);
+		color: var(--color-text-subtle);
+		transition: transform 0.18s ease;
+	}
+	.explore a:hover .explore-arrow { color: var(--color-accent); }
+	.explore-label {
+		font-size: var(--fs-md);
+		font-weight: 600;
+		letter-spacing: -0.01em;
+	}
+	.explore-desc {
+		font-size: var(--fs-sm);
+		line-height: var(--lh-snug);
+		color: var(--color-text-muted);
+	}
+	@media (max-width: 640px) {
+		.explore a {
+			grid-template-columns: 1.5rem 1fr;
+		}
+		.explore-desc {
+			grid-column: 2 / -1;
+			margin-top: var(--space-2xs);
+		}
+	}
+
+	/* ===== Credits =====
+	   Film-credits-style line block. Mono small-caps label in fixed
+	   left column, prose body in normal sans on the right.
+	   Replaces the 3-column stat row with vertical dividers. */
+	.credits {
+		margin: 0;
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--color-border);
+	}
+	.credits-row {
+		display: grid;
+		grid-template-columns: 8rem 1fr;
+		column-gap: var(--space-lg);
+		padding: var(--space-2xs) 0;
+	}
+	.credits-row dt {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: var(--fs-2xs);
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--color-text-subtle);
+		padding-top: 2px;
+	}
+	.credits-row dd {
+		margin: 0;
+		font-size: var(--fs-sm);
+		line-height: var(--lh-base);
+		color: var(--color-text);
+	}
+	.credits-row dd a {
 		color: inherit;
 		text-decoration: underline;
 		text-underline-offset: 2px;
+		text-decoration-color: var(--color-border-strong);
 	}
-	.stat-value a:hover { color: var(--color-accent); }
-	.stat-divider {
-		width: 1px;
-		background: var(--color-border);
-		margin: 0 var(--space-xl) 0 0;
-		flex-shrink: 0;
+	.credits-row dd a:hover {
+		color: var(--color-accent);
+		text-decoration-color: currentColor;
 	}
 	@media (max-width: 640px) {
-		.stat-row {
-			flex-direction: column;
-			gap: var(--space-md);
+		.credits-row {
+			grid-template-columns: 1fr;
+			gap: var(--space-2xs);
+			padding: var(--space-xs) 0;
 		}
-		.stat { padding: 0; }
-		.stat-divider { display: none; }
 	}
 </style>
