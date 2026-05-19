@@ -89,6 +89,14 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 	<div class="projects-list">
 		{projects.map(({ id, data }) => {
 			const gallery = galleries[id];
+			// The gallery's editorial number depends on which sibling
+			// sections render above it. Contribution=01, SOAR=02,
+			// Failure=03, Gallery=next-available.
+			let nextIndex = 1;
+			if (data.myContribution) nextIndex++;
+			if (data.soar)            nextIndex++;
+			if (data.failureStory)    nextIndex++;
+			const galleryIndex = String(nextIndex).padStart(2, '0');
 			return (
 				<div class="project-group">
 					<ProjectCard
@@ -105,27 +113,27 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 					/>
 
 					{data.myContribution && (
-						<InfoPanel tone="neutral" label="My personal contribution">
+						<InfoPanel tone="neutral" index="01" label="Contribution">
 							<p>{data.myContribution}</p>
 						</InfoPanel>
 					)}
 
 					{data.soar && (
-						<InfoPanel tone="accent" as="section" label="SOAR" sublabel="Situation · Obstacle · Action · Result">
+						<InfoPanel tone="accent" as="section" index="02" label="Approach" sublabel="Situation · Obstacle · Action · Result">
 							<dl class="kv-grid">
-								<div>
+								<div data-step="01">
 									<dt>Situation</dt>
 									<dd>{data.soar.situation}</dd>
 								</div>
-								<div>
+								<div data-step="02">
 									<dt>Obstacle</dt>
 									<dd>{data.soar.obstacle}</dd>
 								</div>
-								<div>
+								<div data-step="03">
 									<dt>Action</dt>
 									<dd>{data.soar.action}</dd>
 								</div>
-								<div>
+								<div data-step="04">
 									<dt>Result</dt>
 									<dd>{data.soar.result}</dd>
 								</div>
@@ -134,17 +142,17 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 					)}
 
 					{data.failureStory && (
-						<InfoPanel tone="muted" as="section" label="Failure → Learning → Change">
+						<InfoPanel tone="muted" as="section" index="03" label="What I learned">
 							<dl class="kv-stack">
-								<div>
+								<div data-step="01">
 									<dt>What I was trying to do</dt>
 									<dd>{data.failureStory.context}</dd>
 								</div>
-								<div>
+								<div data-step="02">
 									<dt>What didn't go well</dt>
 									<dd>{data.failureStory.whatHappened}</dd>
 								</div>
-								<div>
+								<div data-step="03">
 									<dt>What I learned &amp; what I do differently now</dt>
 									<dd>{data.failureStory.learning}</dd>
 								</div>
@@ -153,11 +161,13 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 					)}
 
 					{gallery && (
-						<div class="inline-gallery">
-							<div class="gallery-header">
+						<section class="inline-gallery">
+							<header class="gallery-header">
+								<span class="gallery-index mono">{galleryIndex}</span>
+								<span class="gallery-sep" aria-hidden="true">/</span>
 								<span class="gallery-title">{gallery.heading}</span>
 								<span class="gallery-caption">{gallery.caption}</span>
-							</div>
+							</header>
 							<div class:list={['gallery-grid', { 'gallery-grid--wide': gallery.items.length > 2 }]}>
 								{gallery.items.map((img) => (
 									<figure>
@@ -166,7 +176,7 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 									</figure>
 								))}
 							</div>
-						</div>
+						</section>
 					)}
 				</div>
 			);
@@ -197,21 +207,34 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 	}
 	.project-group:last-child { margin-bottom: 0; }
 
-	/* Inline gallery — quieter than before, sits visually beneath the
-	   card stack but is no longer the loud rainbow stripe. */
+	/* Inline gallery — same editorial hairline-rule + numbered-kicker
+	   pattern as <InfoPanel>, applied here directly so the gallery
+	   reads as another numbered section in the project article rather
+	   than a tinted card. */
 	.inline-gallery {
-		margin-top: var(--space-sm);
-		padding: var(--space-md) var(--space-lg);
-		background: var(--color-surface);
-		border-radius: var(--radius-md);
+		margin-top: var(--space-xl);
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--color-border);
 	}
 
 	.gallery-header {
 		display: flex;
 		align-items: baseline;
-		gap: var(--space-sm);
-		margin-bottom: var(--space-sm);
+		gap: var(--space-xs);
+		margin-bottom: var(--space-md);
 		flex-wrap: wrap;
+	}
+	.gallery-index {
+		font-size: var(--fs-2xs);
+		font-weight: 600;
+		font-feature-settings: "tnum" on, "ss03" on;
+		color: var(--color-text-subtle);
+		letter-spacing: 0.04em;
+	}
+	.gallery-sep {
+		font-size: var(--fs-2xs);
+		color: var(--color-text-subtle);
+		opacity: 0.6;
 	}
 	.gallery-title {
 		font-size: var(--fs-2xs);
@@ -223,12 +246,17 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 	.gallery-caption {
 		font-size: var(--fs-xs);
 		color: var(--color-text-muted);
+		font-style: italic;
+		margin-left: auto;
+	}
+	@media (max-width: 640px) {
+		.gallery-caption { margin-left: 0; flex-basis: 100%; }
 	}
 
 	.gallery-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-		gap: var(--space-sm);
+		gap: var(--space-md);
 	}
 	.gallery-grid--wide {
 		grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
@@ -236,20 +264,17 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 
 	.inline-gallery figure {
 		margin: 0;
-		background: var(--color-surface-raised);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		overflow: hidden;
-		text-align: center;
 	}
 	.inline-gallery img {
 		width: 100%;
-		height: 9rem;
+		height: 10rem;
 		object-fit: cover;
 		display: block;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--color-border);
 	}
 	.inline-gallery figcaption {
-		padding: var(--space-2xs) var(--space-xs);
+		margin-top: var(--space-2xs);
 		font-size: var(--fs-xs);
 		color: var(--color-text-muted);
 	}

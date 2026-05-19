@@ -1,24 +1,31 @@
 ---
 /**
- * InfoPanel — single replacement for the four ad-hoc panels flagged in
- * redesign/audit/visual-baseline.md §3:
- *   .soar              -> <InfoPanel tone="accent" ...>
- *   .failure-story     -> <InfoPanel tone="muted" ...>
- *   .my-contribution   -> <InfoPanel tone="neutral" ...>
- *   .capstone-banner   -> moves into <HeroScene eyebrow="..." />
- *                         (this component is no longer used for it)
+ * InfoPanel — editorial section block (v2 of the redesign pass).
  *
- * Visual rules (per design-spec.md §3.1):
- *   - Background is always var(--color-surface) regardless of tone.
- *   - Differentiator is a 3px left rule + the label color.
- *   - Header label is small-caps in --tracking-caps.
- *   - No tinted backgrounds. No header pills. No colored borders all
- *     around. The whole point is to read as one panel family.
+ * v1 used a 3px left rule + tinted background, which (per
+ * redesign/audit/ai-tells.md) read as the literal shadcn / MUI Alert
+ * convention. v2 drops all chrome and replaces it with the editorial
+ * "hairline rule + small-caps kicker" pattern used in NYT longform,
+ * Linear changelogs, Vercel docs, and Stripe docs.
+ *
+ * Visual rules (v2):
+ *   - No tinted background. No left rule. No bordered container.
+ *   - 1px hairline above (`border-top: 1px solid var(--color-border)`).
+ *   - Optional `index` prop renders as a tabular-mono "01" before the
+ *     label, joined by "/". Used for project-entry editorial sections
+ *     (`01 / Contribution`, `02 / Approach`, `03 / What I Learned`).
+ *   - Tone affects label color only:
+ *       neutral -> --color-text      (default)
+ *       accent  -> --color-accent    (the narrative beat — SOAR)
+ *       muted   -> --color-text-subtle (less prominent)
+ *   - Body is pure typography, no chrome.
  */
 interface Props {
 	tone?: 'neutral' | 'accent' | 'muted';
 	label?: string;
 	sublabel?: string;
+	/** Tabular mono index, e.g. "01". When set, renders as `01 / LABEL`. */
+	index?: string;
 	/** Override <aside> with a different element (e.g. 'section'). */
 	as?: 'aside' | 'section' | 'div';
 }
@@ -26,14 +33,17 @@ const {
 	tone = 'neutral',
 	label,
 	sublabel,
-	as: Tag = 'aside',
+	index,
+	as: Tag = 'section',
 } = Astro.props;
 ---
 
 <Tag class:list={['info-panel', `info-panel--${tone}`]}>
-	{label && (
+	{(index || label) && (
 		<header class="info-panel__head">
-			<span class="info-panel__label">{label}</span>
+			{index && <span class="info-panel__index mono">{index}</span>}
+			{index && label && <span class="info-panel__sep" aria-hidden="true">/</span>}
+			{label && <span class="info-panel__label">{label}</span>}
 			{sublabel && <span class="info-panel__sub">{sublabel}</span>}
 		</header>
 	)}
@@ -43,32 +53,37 @@ const {
 </Tag>
 
 <style>
+	/* The whole component is a typography layout, not a panel.
+	   No background, no border, no radius, no shadow. Just a hairline
+	   rule above and a small-caps kicker. */
 	.info-panel {
-		--rule-color: var(--color-border-strong);
 		--label-color: var(--color-text);
-		position: relative;
-		margin-top: var(--space-sm);
-		padding: var(--space-md) var(--space-lg);
-		background: var(--color-surface);
-		border-radius: var(--radius-md);
-		box-shadow: inset 3px 0 0 var(--rule-color);
+		margin-top: var(--space-xl);
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--color-border);
 	}
 
-	.info-panel--accent {
-		--rule-color: var(--color-accent);
-		--label-color: var(--color-accent);
-	}
-	.info-panel--muted {
-		--rule-color: var(--color-border-strong);
-		--label-color: var(--color-text-muted);
-	}
+	.info-panel--accent { --label-color: var(--color-accent); }
+	.info-panel--muted  { --label-color: var(--color-text-subtle); }
 
 	.info-panel__head {
 		display: flex;
 		align-items: baseline;
-		gap: var(--space-sm);
+		gap: var(--space-xs);
 		flex-wrap: wrap;
-		margin-bottom: var(--space-xs);
+		margin-bottom: var(--space-md);
+	}
+	.info-panel__index {
+		font-size: var(--fs-2xs);
+		font-weight: 600;
+		font-feature-settings: "tnum" on, "ss03" on;
+		color: var(--color-text-subtle);
+		letter-spacing: 0.04em;
+	}
+	.info-panel__sep {
+		font-size: var(--fs-2xs);
+		color: var(--color-text-subtle);
+		opacity: 0.6;
 	}
 	.info-panel__label {
 		font-size: var(--fs-2xs);
@@ -79,65 +94,110 @@ const {
 	}
 	.info-panel__sub {
 		font-size: var(--fs-xs);
-		color: var(--color-text-subtle);
+		color: var(--color-text-muted);
+		font-style: italic;
+		margin-left: auto; /* sublabel hangs to the right on wide rows */
+	}
+	@media (max-width: 640px) {
+		.info-panel__sub { margin-left: 0; flex-basis: 100%; }
 	}
 
 	.info-panel__body :global(*:first-child) { margin-top: 0; }
 	.info-panel__body :global(*:last-child)  { margin-bottom: 0; }
+	.info-panel__body :global(p) {
+		font-size: var(--fs-base);
+		line-height: var(--lh-base);
+	}
 
-	/* When the panel hosts a <dl> grid (SOAR uses this), give it
-	   sensible defaults so consumers don't have to repeat them. */
+	/* SOAR: each step is a numbered cell with a small-caps step label
+	   and prose underneath. 2x2 on desktop, stacked on mobile. */
 	.info-panel__body :global(dl.kv-grid) {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: var(--space-sm) var(--space-md);
+		gap: var(--space-lg) var(--space-2xl);
 		margin: 0;
 	}
 	@media (max-width: 640px) {
-		.info-panel__body :global(dl.kv-grid) { grid-template-columns: 1fr; }
+		.info-panel__body :global(dl.kv-grid) {
+			grid-template-columns: 1fr;
+			gap: var(--space-md);
+		}
 	}
 	.info-panel__body :global(dl.kv-grid > div) {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2xs);
+		display: grid;
+		grid-template-columns: 1.75rem 1fr;
+		column-gap: var(--space-sm);
+		row-gap: var(--space-2xs);
+	}
+	/* The numeric prefix (01, 02, 03, 04) is rendered by the page as
+	   a `data-step` on each <div>; we inject it via ::before so the
+	   markup stays semantic. */
+	.info-panel__body :global(dl.kv-grid > div::before) {
+		content: attr(data-step);
+		grid-column: 1;
+		grid-row: 1 / 3;
+		font-family: var(--font-mono);
+		font-size: var(--fs-2xs);
+		font-weight: 500;
+		font-feature-settings: "tnum" on;
+		color: var(--color-text-subtle);
+		padding-top: 2px;
+		letter-spacing: 0.04em;
 	}
 	.info-panel__body :global(dl.kv-grid dt) {
+		grid-column: 2;
 		font-size: var(--fs-2xs);
 		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.07em;
-		color: var(--color-text-subtle);
+		letter-spacing: var(--tracking-caps);
+		color: var(--color-text);
 	}
 	.info-panel__body :global(dl.kv-grid dd) {
+		grid-column: 2;
 		margin: 0;
 		font-size: var(--fs-sm);
 		line-height: var(--lh-snug);
-		color: var(--color-text);
+		color: var(--color-text-muted);
 	}
 
-	/* Stacked variant for the failure story (asymmetric content). */
+	/* Failure story: same pattern but stacked vertically. */
 	.info-panel__body :global(dl.kv-stack) {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-sm);
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-md);
 		margin: 0;
 	}
 	.info-panel__body :global(dl.kv-stack > div) {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2xs);
+		display: grid;
+		grid-template-columns: 1.75rem 1fr;
+		column-gap: var(--space-sm);
+		row-gap: var(--space-2xs);
+	}
+	.info-panel__body :global(dl.kv-stack > div::before) {
+		content: attr(data-step);
+		grid-column: 1;
+		grid-row: 1 / 3;
+		font-family: var(--font-mono);
+		font-size: var(--fs-2xs);
+		font-weight: 500;
+		font-feature-settings: "tnum" on;
+		color: var(--color-text-subtle);
+		padding-top: 2px;
+		letter-spacing: 0.04em;
 	}
 	.info-panel__body :global(dl.kv-stack dt) {
+		grid-column: 2;
 		font-size: var(--fs-2xs);
 		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.07em;
-		color: var(--color-text-subtle);
+		letter-spacing: var(--tracking-caps);
+		color: var(--color-text);
 	}
 	.info-panel__body :global(dl.kv-stack dd) {
+		grid-column: 2;
 		margin: 0;
 		font-size: var(--fs-sm);
 		line-height: var(--lh-snug);
-		color: var(--color-text);
+		color: var(--color-text-muted);
 	}
 </style>
