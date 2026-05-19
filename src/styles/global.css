@@ -5,6 +5,13 @@
  * Component styles consume var(--token); they MUST NOT hard-code
  * hex values. Adding a new color or size means adding a new token.
  * ============================================================= */
+
+/* Geist + Geist Mono — Vercel's typeface family, MIT licensed.
+   Loaded via @fontsource-variable so we get the full weight axis
+   in a single woff2 per face (~80 KB gzipped each). */
+@import "@fontsource-variable/geist/index.css";
+@import "@fontsource-variable/geist-mono/index.css";
+
 :root {
 	/* ---- Foreground (slate spine) ---- */
 	--color-text:        #0f172a; /* slate-900 — body */
@@ -75,9 +82,17 @@
 	--shadow-3: 0 4px 16px rgba(15,23,42,0.08);
 	--shadow-hero: 0 16px 48px rgba(0,0,0,0.35);
 
+	/* ---- Typography ---- */
+	--font-sans: "Geist Variable", system-ui, -apple-system,
+		BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	--font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular",
+		Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	/* Stylistic alternates: tabular figures everywhere, Geist's
+	   single-storey 'a' (cv11), curved 'l' off (ss03). Subtle but
+	   distinguishes from default Geist. */
+	--font-features: "tnum" on, "ss01" on;
+
 	/* ---- Layout ---- */
-	--font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-		Roboto, Helvetica, Arial, sans-serif;
 	--max-width: 64rem;
 
 	/* ---- Legacy aliases kept so component-scoped styles that read
@@ -100,8 +115,27 @@ body {
 	line-height: var(--lh-base);
 	color: var(--color-text);
 	background: var(--color-bg);
+	font-feature-settings: var(--font-features);
+	font-variant-numeric: tabular-nums;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+/* Tighten Geist's default heading rhythm. Geist sits a bit looser than
+   Inter at the same size, so headings get a custom -0.015em track and
+   slightly tighter line-height. */
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--font-sans);
+	letter-spacing: -0.015em;
+	line-height: var(--lh-tight);
+}
+
+/* Mono utility — applied to tech pills, dates, file paths, version
+   numbers anywhere they appear. Use the class, not the raw font name. */
+.mono, code, kbd, pre, samp {
+	font-family: var(--font-mono);
+	font-feature-settings: "tnum" on, "ss01" on, "ss03" on;
 }
 
 a {
