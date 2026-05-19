@@ -90,16 +90,22 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		overflow: hidden;
-		transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+		transition: box-shadow 0.25s ease, border-color 0.25s ease,
+			transform 0.25s ease;
+		will-change: transform;
 	}
+	/* Hover lift — the editorial replacement for the old 3px amber
+	   left rule on .card--capstone. Importance is now marked by the
+	   outlined "CISC480 CAPSTONE" badge alone, and every card gets
+	   the same subtle translate + shadow promotion on hover. */
 	.card:hover {
+		transform: translateY(-3px);
 		box-shadow: var(--shadow-3);
 		border-color: var(--color-border-strong);
 	}
-	/* Capstone gets a single thin accent rule on the leading edge —
-	   no fill, no pink banner. Marks importance without shouting. */
-	.card--capstone {
-		box-shadow: inset 3px 0 0 var(--color-accent);
+	.card:focus-within {
+		box-shadow: var(--shadow-3);
+		border-color: var(--color-accent);
 	}
 	.card--reversed { direction: rtl; }
 	.card--reversed > * { direction: ltr; }
