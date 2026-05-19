@@ -4,6 +4,7 @@ import HeroScene from '../../components/HeroScene.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import InfoPanel from '../../components/InfoPanel.astro';
 import ScrollReveal from '../../components/react/ScrollReveal.tsx';
+import ProjectGalleryCarousel from '../../components/react/ProjectGalleryCarousel.tsx';
 import { getCollection } from 'astro:content';
 import { withBase } from '../../lib/url';
 
@@ -163,22 +164,36 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 					)}
 
 					{gallery && (
-						<section class="inline-gallery">
-							<header class="gallery-header">
-								<span class="gallery-index mono">{galleryIndex}</span>
-								<span class="gallery-sep" aria-hidden="true">/</span>
-								<span class="gallery-title">{gallery.heading}</span>
-								<span class="gallery-caption">{gallery.caption}</span>
-							</header>
-							<div class:list={['gallery-grid', { 'gallery-grid--wide': gallery.items.length > 2 }]}>
-								{gallery.items.map((img) => (
-									<figure>
-										<img src={withBase(img.src)} alt={img.alt} loading="lazy" decoding="async" />
-										<figcaption>{img.cap}</figcaption>
-									</figure>
-								))}
-							</div>
-						</section>
+						gallery.items.length > 2 ? (
+							<ProjectGalleryCarousel
+								client:visible
+								indexLabel={galleryIndex}
+								heading={gallery.heading}
+								caption={gallery.caption}
+								items={gallery.items.map((img) => ({
+									src: withBase(img.src),
+									alt: img.alt,
+									cap: img.cap,
+								}))}
+							/>
+						) : (
+							<section class="inline-gallery">
+								<header class="gallery-header">
+									<span class="gallery-index mono">{galleryIndex}</span>
+									<span class="gallery-sep" aria-hidden="true">/</span>
+									<span class="gallery-title">{gallery.heading}</span>
+									<span class="gallery-caption">{gallery.caption}</span>
+								</header>
+								<div class="gallery-grid">
+									{gallery.items.map((img) => (
+										<figure>
+											<img src={withBase(img.src)} alt={img.alt} loading="lazy" decoding="async" />
+											<figcaption>{img.cap}</figcaption>
+										</figure>
+									))}
+								</div>
+							</section>
+						)
 					)}
 				</div>
 				</ScrollReveal>
