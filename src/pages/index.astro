@@ -1,70 +1,142 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/url';
+
+const headshot = withBase('/images/headshot.jpg');
 ---
 
 <BaseLayout
-	title="Portfolio"
-	description="Computer Science major who likes turning ideas into working tools fast. Developer portfolio showcasing automation, mobile, and web projects."
+	title="Home"
+	description="CISC480 Senior Capstone individual portfolio. Computer Science major (Mathematics & Game Design minors) at the University of St. Thomas. Practical automation, rapid prototyping, and tools that help small businesses and underserved users."
 >
 	<div class="container">
-			<header class="hero">
-				<div class="headshot-frame">
-					<img src="/images/headshot.jpg" alt="Headshot of Eli Goldberger" width="256" height="256" loading="eager" />
-				</div>
-				<div class="hero-text">
-					<h1>Eli Goldberger</h1>
-					<p class="lead">
-						Computer Science major who likes turning ideas into working tools fast. I enjoy helping people and
-						small businesses with practical tech, but my main goal would be to eventually be able to
-						contribute and help in medical or mental health spaces.
-					</p>
-					<p class="contact-line">
-						eligoldberger5@gmail.com · <a href="https://www.linkedin.com/in/eli-goldberger-b3b440212/" target="_blank" rel="noopener">LinkedIn</a>
-						· <a href="https://github.com/FlamingMachTurtle" target="_blank" rel="noopener">GitHub</a>
-					</p>
-				</div>
-			</header>
+		<aside class="capstone-banner" aria-label="Course context">
+			<span class="capstone-pill">CISC480 · Senior Capstone · Spring 2026</span>
+			<span class="capstone-sub">
+				Individual portfolio + signature work reflection. The full reflection lives in this repo's
+				<a href="https://github.com/FlamingMachTurtle/cisc480-portfolio#holistic-signature-work-reflection" target="_blank" rel="noopener">README</a>.
+			</span>
+		</aside>
 
-			<section class="about-section">
-				<div class="two-col">
-					<div>
-						<h2>About Me</h2>
-						<p>
-							I'm a hands-on developer who enjoys figuring out what actually helps someone and building it.
-							All the way from shipping automation pipelines on tight deadlines to designing intuitive
-							interfaces for mobile projects. From my projects, I've picked up experience with backend
-							integrations, api integrations, token management, image processing, and business optimization
-							tools, and I'm excited to bring my experience and mindset to future medical and mental health
-							tech.
-						</p>
-					</div>
-					<div>
-						<h2>Goals</h2>
-						<ul>
-							<li>Continue to develop my rapid-prototyping skills so I can launch solutions people actually use with short deadlines.</li>
-							<li>Help people and businesses worldwide with thoughtful automation when it makes sense.</li>
-							<li>Contribute to medical or mental health technology projects.</li>
-							<li>Grow my LLC into a sustainable consultancy that supports clients end to end.</li>
-						</ul>
-					</div>
-				</div>
-			</section>
+		<header class="hero">
+			<div class="headshot-frame">
+				<img src={headshot} alt="Headshot of Eli Goldberger" width="256" height="256" loading="eager" />
+			</div>
+			<div class="hero-text">
+				<h1>Eli Goldberger</h1>
+				<p class="lead">
+					B.S. Computer Science (May 2026) · Minors in Mathematics &amp; Game Design · University of St. Thomas.
+					I turn ideas into working tools fast, especially for small businesses and people who don't usually get
+					custom software built for them. My longer-term goal is to contribute to medical and mental-health tech.
+				</p>
+				<p class="contact-line">
+					eligoldberger5@gmail.com · <a href="https://www.linkedin.com/in/eli-goldberger-b3b440212/" target="_blank" rel="noopener">LinkedIn</a>
+					· <a href="https://github.com/FlamingMachTurtle" target="_blank" rel="noopener">GitHub</a>
+				</p>
+			</div>
+		</header>
 
+		<!-- ========== ABOUT ME (ACM "unique combination") ========== -->
+		<section class="about-section" id="about" aria-labelledby="about-heading">
+			<h2 id="about-heading">About Me</h2>
+			<p class="about-question">
+				<strong>Why should you hire me?</strong> Because I bring a unique combination of CS and liberal-arts strengths
+				that's pretty hard to find together in one person.
+			</p>
+			<div class="combination">
+				<div class="combo-card">
+					<span class="combo-label">CS strengths</span>
+					<ul>
+						<li>Rapid Python automation against real REST/API constraints (rate limits, auth, idempotency).</li>
+						<li>End-to-end shipping of production tools under tight client deadlines.</li>
+						<li>SwiftUI / iOS for native interfaces; React, Node, and Astro on the web.</li>
+						<li>Image processing pipelines, scheduled services, and small-business data workflows.</li>
+					</ul>
+				</div>
+				<div class="combo-card">
+					<span class="combo-label">Liberal-arts strengths</span>
+					<ul>
+						<li>1:1 and small-group instruction through AVID — I can debug an API and then explain it to a 7th-grader.</li>
+						<li>Intermediate Japanese and basic Hebrew — comfort sitting with ambiguity and other ways of thinking.</li>
+						<li>Math minor rigor: I can reason about edge cases, model failure modes, and check my own work.</li>
+						<li>Operations &amp; client communication from running my own LLC and supporting Honey Smitten through trade shows, QuickBooks, and reporting.</li>
+					</ul>
+				</div>
+			</div>
+			<p class="about-summary">
+				<strong>Net-net:</strong> I'm a developer who can talk to non-technical clients without losing them,
+				ship reliable automation that respects real-world constraints, and treat the people I build for —
+				whether they're store owners, middle-school students, or future patients — with the kind of care
+				the University of St. Thomas tradition expects.
+			</p>
+		</section>
+
+		<!-- ========== SKILLS ========== -->
+		<section class="skills-section" id="skills" aria-labelledby="skills-heading">
+			<h2 id="skills-heading">Skills</h2>
+			<p class="skills-intro">Salient technical skills and professional competencies — pulled from coursework, paid work, and service learning.</p>
+			<div class="skills-grid">
+				<div class="skill-group">
+					<h3>Languages</h3>
+					<ul class="pill-list">
+						<li>Python</li><li>Java</li><li>JavaScript</li><li>TypeScript</li>
+						<li>SQL</li><li>Swift</li><li>HTML / CSS</li>
+					</ul>
+				</div>
+				<div class="skill-group">
+					<h3>Frameworks &amp; Tools</h3>
+					<ul class="pill-list">
+						<li>React</li><li>Node.js</li><li>Astro</li><li>SwiftUI</li>
+						<li>REST APIs</li><li>eBay Trading API</li><li>QuickBooks Online</li>
+						<li>Google Sheets automation</li><li>Power BI / DAX</li><li>Git / GitHub Actions</li>
+					</ul>
+				</div>
+				<div class="skill-group">
+					<h3>Professional Competencies</h3>
+					<ul class="pill-list">
+						<li>Client communication</li><li>Requirements gathering</li>
+						<li>Rapid prototyping</li><li>QA &amp; release coordination</li>
+						<li>1:1 &amp; small-group instruction</li><li>Inquiry-based coaching</li>
+						<li>Operations &amp; reporting</li><li>Documentation &amp; handoffs</li>
+					</ul>
+				</div>
+				<div class="skill-group">
+					<h3>Human Languages</h3>
+					<ul class="pill-list">
+						<li>English (native)</li><li>Japanese (intermediate)</li><li>Hebrew (basic)</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<!-- ========== GOALS (kept, trimmed) ========== -->
+		<section class="goals-section" aria-labelledby="goals-heading">
+			<h2 id="goals-heading">Goals</h2>
+			<ul>
+				<li>Keep sharpening rapid-prototyping skills so I can ship useful tools on short deadlines.</li>
+				<li>Grow <strong>Big Chuck Data LLC</strong> into a sustainable consultancy that supports small-business clients end to end without overcharging or over-automating.</li>
+				<li>Move toward contributing to medical and mental-health technology — the spaces where careful, human-centered software matters most.</li>
+				<li>Keep doing service-learning work alongside the technical work, because the two sharpen each other.</li>
+			</ul>
+		</section>
+
+		<!-- ========== EXPLORE ========== -->
 		<nav class="explore" aria-label="Explore this site">
-			<a href="/projects/" class="explore-item">
-				<span class="explore-label">Projects</span>
-				<span class="explore-desc">See what I've built — automation, apps, and experiments</span>
+			<a href={withBase('/projects/')} class="explore-item">
+				<span class="explore-label">Projects &amp; Experiences</span>
+				<span class="explore-desc">8 entries spanning CS, interdisciplinary, outside-CS, and the CISC480 capstone — with SOAR and failure stories</span>
 			</a>
-			<a href="/resume/" class="explore-item">
+			<a href={withBase('/resume/')} class="explore-item">
 				<span class="explore-label">Resume</span>
-				<span class="explore-desc">Experience, education, and skills at a glance</span>
+				<span class="explore-desc">Experience, education, and skills — viewable inline or downloadable as PDF</span>
 			</a>
-			<a href="/fun/" class="explore-item">
+			<a href={withBase('/fun/')} class="explore-item">
 				<span class="explore-label">Fun Stuff</span>
-				<span class="explore-desc">Hobbies, trade shows, and side interests</span>
+				<span class="explore-desc">Hobbies, trade-show photos, and side interests</span>
 			</a>
 		</nav>
 
+		<!-- ========== STAT ROW ========== -->
 		<div class="stat-row" role="list">
 			<div class="stat" role="listitem">
 				<span class="stat-label">Latest Work</span>
@@ -73,7 +145,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 			<div class="stat-divider" aria-hidden="true"></div>
 			<div class="stat" role="listitem">
 				<span class="stat-label">Focus</span>
-				<span class="stat-value">Automation, rapid prototyping, and practical client tools</span>
+				<span class="stat-value">Practical, ethical automation for small businesses &amp; underserved users</span>
 			</div>
 			<div class="stat-divider" aria-hidden="true"></div>
 			<div class="stat" role="listitem">
@@ -89,6 +161,40 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		max-width: 64rem;
 		margin: 0 auto;
 		padding: 1rem 1.5rem 2rem;
+	}
+
+	.capstone-banner {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+		padding: 0.6rem 0.85rem;
+		background: #fdf2f8;
+		border: 1px solid #fbcfe8;
+		border-radius: 0.5rem;
+		margin-bottom: 1.5rem;
+	}
+	.capstone-pill {
+		display: inline-block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.09em;
+		padding: 0.2rem 0.55rem;
+		background: #fce7f3;
+		color: #be185d;
+		border-radius: 999px;
+		border: 1px solid #fbcfe8;
+	}
+	.capstone-sub {
+		font-size: 0.82rem;
+		color: #831843;
+		line-height: 1.45;
+	}
+	.capstone-sub a {
+		color: inherit;
+		text-decoration: underline;
+		text-underline-offset: 2px;
 	}
 
 	.hero {
@@ -120,7 +226,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		font-size: 2rem;
 	}
 	.lead {
-		font-size: 1.125rem;
+		font-size: 1.05rem;
 		line-height: 1.6;
 		margin: 0 0 1rem;
 	}
@@ -128,32 +234,141 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		margin: 0;
 		font-size: 0.95rem;
 	}
+
+	/* About Me */
 	.about-section {
 		margin-bottom: 2.5rem;
 	}
-	.two-col {
+	.about-section h2 {
+		margin: 0 0 0.5rem;
+		font-size: 1.35rem;
+	}
+	.about-question {
+		font-size: 1rem;
+		line-height: 1.55;
+		margin: 0 0 1rem;
+		color: #334155;
+	}
+	.about-question strong {
+		color: #0f172a;
+	}
+	.combination {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 2rem;
+		gap: 1rem;
 	}
 	@media (max-width: 640px) {
-		.two-col {
+		.combination {
 			grid-template-columns: 1fr;
 		}
 	}
-	.about-section h2 {
-		margin: 0 0 0.75rem;
-		font-size: 1.25rem;
+	.combo-card {
+		padding: 1rem 1.1rem;
+		background: #f8fafc;
+		border: 1px solid #e2e8f0;
+		border-radius: 0.5rem;
 	}
-	.about-section p,
-	.about-section ul {
+	.combo-label {
+		display: block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #475569;
+		margin-bottom: 0.55rem;
+	}
+	.combo-card ul {
 		margin: 0;
-		line-height: 1.6;
+		padding-left: 1.1rem;
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: #334155;
 	}
-	.about-section ul {
-		padding-left: 1.5rem;
+	.combo-card li {
+		margin-bottom: 0.35rem;
+	}
+	.combo-card li:last-child {
+		margin-bottom: 0;
+	}
+	.about-summary {
+		margin: 1rem 0 0;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: #334155;
 	}
 
+	/* Skills */
+	.skills-section {
+		margin-bottom: 2.5rem;
+	}
+	.skills-section h2 {
+		margin: 0 0 0.5rem;
+		font-size: 1.35rem;
+	}
+	.skills-intro {
+		font-size: 0.95rem;
+		color: #475569;
+		margin: 0 0 1rem;
+	}
+	.skills-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1rem;
+	}
+	@media (max-width: 640px) {
+		.skills-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+	.skill-group {
+		padding: 0.9rem 1rem;
+		background: #fff;
+		border: 1px solid #e2e8f0;
+		border-radius: 0.5rem;
+	}
+	.skill-group h3 {
+		margin: 0 0 0.55rem;
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #0f172a;
+	}
+	.pill-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+	.pill-list li {
+		font-size: 0.78rem;
+		padding: 0.2rem 0.55rem;
+		background: #f1f5f9;
+		border: 1px solid #e2e8f0;
+		border-radius: 999px;
+		color: #334155;
+		white-space: nowrap;
+	}
+
+	/* Goals */
+	.goals-section {
+		margin-bottom: 2.5rem;
+	}
+	.goals-section h2 {
+		margin: 0 0 0.5rem;
+		font-size: 1.35rem;
+	}
+	.goals-section ul {
+		margin: 0;
+		padding-left: 1.5rem;
+		line-height: 1.6;
+	}
+	.goals-section li {
+		margin-bottom: 0.3rem;
+	}
+
+	/* Explore */
 	.explore {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
@@ -192,6 +407,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		}
 	}
 
+	/* Stat row */
 	.stat-row {
 		display: flex;
 		align-items: stretch;

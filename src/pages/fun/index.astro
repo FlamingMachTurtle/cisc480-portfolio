@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/url';
 ---
 
 <BaseLayout
@@ -74,15 +75,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 			<p>From B2B buyer-to-buyer shows in Atlanta and Las Vegas with Honey Smitten — enthusiastic buyers, a surprise airport delay, and an incredible KitKat wall.</p>
 			<div class="gallery-grid">
 				<figure>
-					<img src="/images/b2b-shows/atlanta/atlanta-show.jpg" alt="Eli Goldberger standing with the Honey Smitten team at a colorful buyer-to-buyer trade show booth in Atlanta." loading="lazy" decoding="async" />
+					<img src={withBase('/images/b2b-shows/atlanta/atlanta-show.jpg')} alt="Eli Goldberger standing with the Honey Smitten team at a colorful buyer-to-buyer trade show booth in Atlanta." loading="lazy" decoding="async" />
 					<figcaption>Booth in Atlanta</figcaption>
 				</figure>
 				<figure>
-					<img src="/images/b2b-shows/atlanta/airport.jpg" alt="Crowded airport concourse with travelers waiting under a glitching information screen showing a sad face emoji." loading="lazy" decoding="async" />
+					<img src={withBase('/images/b2b-shows/atlanta/airport.jpg')} alt="Crowded airport concourse with travelers waiting under a glitching information screen showing a sad face emoji." loading="lazy" decoding="async" />
 					<figcaption>Airport delay on the way home</figcaption>
 				</figure>
 				<figure>
-					<img src="/images/b2b-shows/vegas/vegas-candy.jpg" alt="Display shelves filled with rows of international KitKat flavors inside a Las Vegas candy shop." loading="lazy" decoding="async" />
+					<img src={withBase('/images/b2b-shows/vegas/vegas-candy.jpg')} alt="Display shelves filled with rows of international KitKat flavors inside a Las Vegas candy shop." loading="lazy" decoding="async" />
 					<figcaption>Vegas KitKat lineup</figcaption>
 				</figure>
 			</div>

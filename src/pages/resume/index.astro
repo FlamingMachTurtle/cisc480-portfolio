@@ -1,5 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/url';
+
+const pdfHref = withBase('/resume/resume.pdf');
+const ustLogo = withBase('/images/resume/ust-logo.png');
+const bcdLogo = withBase('/images/resume/bcd-logo.png');
 ---
 
 <BaseLayout
@@ -9,7 +14,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 	<div class="resume-bg">
 	<div class="paper-stage">
 		<div class="toolbar" role="toolbar" aria-label="Resume actions">
-			<a href="/resume/resue.pdf" download="Eli Goldberger Resume.pdf" class="tool-link" title="Download PDF">
+			<a href={pdfHref} download="Eli Goldberger Resume.pdf" class="tool-link" title="Download PDF">
 				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 				Download
 			</a>
@@ -21,7 +26,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 		<article class="paper" aria-label="Resume">
 			<!-- UST logo top-right -->
-			<img src="/images/resume/ust-logo.png" alt="University of St. Thomas crest" class="ust-logo" />
+			<img src={ustLogo} alt="University of St. Thomas crest" class="ust-logo" />
 
 			<!-- Header -->
 			<header class="paper-head">
@@ -94,7 +99,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 				<div class="entry">
 					<div class="row">
 						<div class="row-left">
-							<img src="/images/resume/bcd-logo.png" alt="Big Chuck Data LLC logo" class="inline-logo" />
+							<img src={bcdLogo} alt="Big Chuck Data LLC logo" class="inline-logo" />
 							<strong>Big Chuck Data LLC</strong>
 						</div>
 						<span class="date">August 2024 – Present</span>
@@ -156,8 +161,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 		<section id="pdf-section" class="pdf-section" aria-label="Downloadable PDF resume" hidden>
 			<div class="pdf-bar">
 				<span class="pdf-label">Original PDF</span>
-				<a href="/resume/resue.pdf" download="Eli Goldberger Resume.pdf" class="tool-link">Download</a>
-				<a href="/resume/resue.pdf" target="_blank" rel="noopener" class="tool-link">Open in New Tab</a>
+				<a href={pdfHref} download="Eli Goldberger Resume.pdf" class="tool-link">Download</a>
+				<a href={pdfHref} target="_blank" rel="noopener" class="tool-link">Open in New Tab</a>
 				<button type="button" class="tool-link" id="hide-pdf-btn">Close</button>
 			</div>
 			<div class="pdf-embed">
@@ -182,7 +187,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 	function openPdf() {
 		if (!section) return;
 		section.hidden = false;
-		if (iframe && !iframe.src) iframe.src = '/resume/resue.pdf#toolbar=1';
+		if (iframe && !iframe.src) {
+			const base = (import.meta as any).env?.BASE_URL ?? '/';
+			const trimmed = base.endsWith('/') ? base.slice(0, -1) : base;
+			iframe.src = `${trimmed}/resume/resume.pdf#toolbar=1`;
+		}
 		section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 	}
 	function closePdf() {

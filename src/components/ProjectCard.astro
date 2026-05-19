@@ -1,28 +1,61 @@
 ---
+import { withBase } from '../lib/url';
+
 interface Props {
 	title: string;
 	description: string;
 	tech: string[];
+	keywords?: string[];
+	category?: 'cs' | 'interdisciplinary' | 'outside-cs' | 'capstone';
 	image: string;
 	imageAlt: string;
 	imageFirst?: boolean;
 	demoUrl?: string;
-	extraImages?: { src: string; alt: string }[];
 }
 
-const { title, description, tech = [], image, imageAlt, imageFirst = false, demoUrl } = Astro.props;
+const {
+	title,
+	description,
+	tech = [],
+	keywords = [],
+	category,
+	image,
+	imageAlt,
+	imageFirst = false,
+	demoUrl,
+} = Astro.props;
+
+const categoryLabel: Record<NonNullable<Props['category']>, string> = {
+	cs: 'CS / Technical',
+	interdisciplinary: 'Interdisciplinary',
+	'outside-cs': 'Outside CS',
+	capstone: 'CISC480 Capstone',
+};
 ---
 
 <article class:list={['card', { 'card--reversed': imageFirst }]}>
 	<div class="card-body">
+		{category && (
+			<span class:list={['card-badge', `card-badge--${category}`]}>{categoryLabel[category]}</span>
+		)}
 		<h2 class="card-title">{title}</h2>
 		<p class="card-desc">{description}</p>
 		{tech.length > 0 && (
-			<ul class="card-tech">
+			<ul class="card-tech" aria-label="Tech and skills">
 				{tech.map((t) => (
 					<li>{t}</li>
 				))}
 			</ul>
+		)}
+		{keywords.length > 0 && (
+			<div class="card-keywords">
+				<span class="card-keywords-label">Keywords:</span>
+				<ul class="card-keyword-list" aria-label="Project keywords">
+					{keywords.map((k) => (
+						<li>{k}</li>
+					))}
+				</ul>
+			</div>
 		)}
 		{demoUrl && (
 			<a href={demoUrl} class="card-link" target="_blank" rel="noopener">
@@ -32,7 +65,7 @@ const { title, description, tech = [], image, imageAlt, imageFirst = false, demo
 		)}
 	</div>
 	<div class="card-media">
-		<img src={image} alt={imageAlt} loading="lazy" decoding="async" />
+		<img src={withBase(image)} alt={imageAlt} loading="lazy" decoding="async" />
 	</div>
 </article>
 
@@ -48,7 +81,7 @@ const { title, description, tech = [], image, imageAlt, imageFirst = false, demo
 		transition: box-shadow 0.2s;
 	}
 	.card:hover {
-		box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 	}
 	.card--reversed {
 		direction: rtl;
@@ -64,6 +97,38 @@ const { title, description, tech = [], image, imageAlt, imageFirst = false, demo
 		justify-content: center;
 	}
 
+	.card-badge {
+		align-self: flex-start;
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.2rem 0.55rem;
+		border-radius: 999px;
+		margin-bottom: 0.55rem;
+		border: 1px solid transparent;
+	}
+	.card-badge--cs {
+		background: #eff6ff;
+		color: #1d4ed8;
+		border-color: #bfdbfe;
+	}
+	.card-badge--interdisciplinary {
+		background: #fef3c7;
+		color: #b45309;
+		border-color: #fde68a;
+	}
+	.card-badge--outside-cs {
+		background: #dcfce7;
+		color: #15803d;
+		border-color: #bbf7d0;
+	}
+	.card-badge--capstone {
+		background: #fce7f3;
+		color: #be185d;
+		border-color: #fbcfe8;
+	}
+
 	.card-title {
 		font-size: 1.25rem;
 		font-weight: 700;
@@ -77,6 +142,7 @@ const { title, description, tech = [], image, imageAlt, imageFirst = false, demo
 		line-height: 1.55;
 		color: #334155;
 		margin: 0 0 0.75rem;
+		white-space: pre-line;
 	}
 
 	.card-tech {
@@ -95,6 +161,37 @@ const { title, description, tech = [], image, imageAlt, imageFirst = false, demo
 		border-radius: 999px;
 		color: #475569;
 		white-space: nowrap;
+	}
+
+	.card-keywords {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.4rem;
+		margin: 0 0 0.75rem;
+	}
+	.card-keywords-label {
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #64748b;
+	}
+	.card-keyword-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+	}
+	.card-keyword-list li {
+		font-size: 0.7rem;
+		padding: 0.15rem 0.5rem;
+		background: #fff;
+		border: 1px dashed #cbd5e1;
+		border-radius: 0.25rem;
+		color: #334155;
 	}
 
 	.card-link {

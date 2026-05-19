@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Placeholder for the CISC480 Senior Capstone project figure">
+	<defs>
+		<linearGradient id="capBg" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0%" stop-color="#fdf2f8"/>
+			<stop offset="100%" stop-color="#fce7f3"/>
+		</linearGradient>
+	</defs>
+
+	<rect width="800" height="500" fill="url(#capBg)"/>
+
+	<!-- Grid background pattern -->
+	<g stroke="#fbcfe8" stroke-width="1">
+		<line x1="0" y1="100" x2="800" y2="100"/>
+		<line x1="0" y1="200" x2="800" y2="200"/>
+		<line x1="0" y1="300" x2="800" y2="300"/>
+		<line x1="0" y1="400" x2="800" y2="400"/>
+		<line x1="100" y1="0" x2="100" y2="500"/>
+		<line x1="200" y1="0" x2="200" y2="500"/>
+		<line x1="300" y1="0" x2="300" y2="500"/>
+		<line x1="400" y1="0" x2="400" y2="500"/>
+		<line x1="500" y1="0" x2="500" y2="500"/>
+		<line x1="600" y1="0" x2="600" y2="500"/>
+		<line x1="700" y1="0" x2="700" y2="500"/>
+	</g>
+
+	<!-- Card -->
+	<rect x="160" y="130" width="480" height="240" rx="16" fill="#fff" stroke="#fbcfe8" stroke-width="2"/>
+
+	<!-- Pin badge -->
+	<rect x="190" y="160" width="220" height="32" rx="16" fill="#fce7f3" stroke="#fbcfe8"/>
+	<text x="300" y="182" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#be185d">CISC480 · CAPSTONE</text>
+
+	<!-- Title placeholder -->
+	<rect x="190" y="210" width="420" height="20" rx="4" fill="#f9a8d4"/>
+	<rect x="190" y="240" width="320" height="14" rx="4" fill="#fbcfe8"/>
+	<rect x="190" y="262" width="380" height="14" rx="4" fill="#fbcfe8"/>
+
+	<!-- Action row -->
+	<rect x="190" y="310" width="100" height="34" rx="6" fill="#be185d"/>
+	<text x="240" y="332" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#fff">View</text>
+
+	<rect x="304" y="310" width="120" height="34" rx="6" fill="#fff" stroke="#be185d" stroke-width="2"/>
+	<text x="364" y="332" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#be185d">Repository</text>
+
+	<!-- Caption -->
+	<text x="400" y="420" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#831843">Capstone figure  replace with a real screenshot before submission</text>
+	<text x="400" y="445" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle" fill="#9d174d">Schema, sort order, and badge already wired up.</text>
+</svg>

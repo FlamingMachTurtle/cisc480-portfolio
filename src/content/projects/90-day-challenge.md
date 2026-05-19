@@ -1,12 +1,27 @@
 ---
 sortOrder: 5
+category: cs
 title: 90-Day Development Challenge
-description: A personal challenge to build small interactive projects daily, focusing on rapid prototyping and experimentation. Created an interactive showcase for people to interact with and play around with what I've made.
+description: >-
+  A self-imposed challenge to build a small interactive project every day for
+  90 days, focused on rapid prototyping and breadth over polish. The published
+  showcase lets visitors actually click and play with what got built, instead
+  of just reading about it. Keywords: rapid prototyping, daily build challenge,
+  WebGL, Three.js, JavaScript, creative coding, self-directed learning.
 tech:
   - WebGL
   - Three.js
   - JavaScript
   - Rapid prototyping
+  - Daily shipping discipline
+keywords:
+  - Rapid prototyping
+  - Daily build challenge
+  - WebGL
+  - Three.js
+  - JavaScript
+  - Creative coding
+  - Self-directed learning
 demoUrl: https://my-90-day-showcase.vercel.app/
 image: /images/30-day/p1 copy.png
 imageAlt: 90-day challenge project — interactive WebGL and Three.js experiment

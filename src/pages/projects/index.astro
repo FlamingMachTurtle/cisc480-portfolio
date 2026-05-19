@@ -2,11 +2,13 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { getCollection } from 'astro:content';
+import { withBase } from '../../lib/url';
 
 const allProjects = await getCollection('projects');
 const projects = allProjects.sort((a, b) => (a.data.sortOrder ?? 99) - (b.data.sortOrder ?? 99));
 
-// Map project IDs to their inline gallery sections
+// Per-entry inline galleries. Image paths are stored without the site
+// base; withBase() in the template prepends the configured base.
 const galleries: Record<string, { heading: string; caption: string; items: { src: string; alt: string; cap: string }[] }> = {
 	'ebay-image-standardization': {
 		heading: 'Image Processing Results',
@@ -35,13 +37,45 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 			{ src: '/images/mc-port/random.png', alt: 'Standalone Minecraft build experiment', cap: 'Build experiment' },
 		],
 	},
+	'honey-smitten-operations': {
+		heading: 'Honey Smitten — On the Floor',
+		caption: 'Buyer-to-buyer trade shows the operations work supports.',
+		items: [
+			{ src: '/images/b2b-shows/atlanta/atlanta-show.jpg', alt: 'Honey Smitten booth at the Atlanta buyer-to-buyer trade show', cap: 'Atlanta booth' },
+			{ src: '/images/b2b-shows/vegas/vegas-candy.jpg', alt: 'Display of international candy and snack items in Las Vegas', cap: 'Vegas show floor' },
+		],
+	},
+	'cisc480-capstone': {
+		heading: 'GreenStep Admin Console — Selected Screens',
+		caption: 'Template authoring with live mobile preview, and a challenge detail with leaderboard.',
+		items: [
+			{
+				src: '/images/greenstep/greenstep-template-form.png',
+				alt: 'Template editing form on the left with name, description, categories, and color-picker fields, and a sticky phone-shaped live mobile preview on the right.',
+				cap: 'Template form + live mobile preview',
+			},
+			{
+				src: '/images/greenstep/greenstep-challenge-detail.png',
+				alt: 'Challenge detail page showing the 2024 Earth Month Sustainability Challenge with a participants table, leaderboard cards with progress bars, and the actions list.',
+				cap: 'Challenge detail with leaderboard',
+			},
+		],
+	},
 };
 ---
 
-<BaseLayout title="Projects" description="Eli Goldberger's projects: eBay automation, NutriBot, SwiftUI, Minecraft, and the 90-day challenge.">
+<BaseLayout
+	title="Projects"
+	description="Projects & experiences for the CISC480 Senior Capstone portfolio — capstone build, client automation, mobile apps, service learning, and small-business operations."
+>
 	<div class="page-header">
-		<h1>Projects</h1>
-		<p class="lead">A selection of work across client automation, app development, and personal experiments.</p>
+		<h1>Projects & Experiences</h1>
+		<p class="lead">
+			A spread of work across CS, interdisciplinary, and outside-CS experiences. Each card includes a category badge,
+			keywords, and a figure so the rubric's required elements are visible at a glance. SOAR-structured entries are
+			labeled <em>Situation</em>, <em>Obstacle</em>, <em>Action</em>, <em>Result</em>; the failure → learning → change
+			story is called out under its own heading inside the eBay entry.
+		</p>
 	</div>
 
 	<div class="projects-list">
@@ -53,11 +87,66 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 						title={data.title}
 						description={data.description}
 						tech={data.tech ?? []}
+						keywords={data.keywords ?? []}
+						category={data.category}
 						image={data.image}
 						imageAlt={data.imageAlt}
 						imageFirst={data.imageFirst}
 						demoUrl={data.demoUrl}
 					/>
+					{data.myContribution && (
+						<aside class="my-contribution" aria-label="My personal contribution to this group project">
+							<span class="my-contribution-label">My personal contribution</span>
+							<p>{data.myContribution}</p>
+						</aside>
+					)}
+					{data.soar && (
+						<section class="soar" aria-label="SOAR narrative">
+							<header class="soar-header">
+								<span class="soar-badge">SOAR</span>
+								<span class="soar-sub">Situation · Obstacle · Action · Result</span>
+							</header>
+							<dl class="soar-grid">
+								<div>
+									<dt>Situation</dt>
+									<dd>{data.soar.situation}</dd>
+								</div>
+								<div>
+									<dt>Obstacle</dt>
+									<dd>{data.soar.obstacle}</dd>
+								</div>
+								<div>
+									<dt>Action</dt>
+									<dd>{data.soar.action}</dd>
+								</div>
+								<div>
+									<dt>Result</dt>
+									<dd>{data.soar.result}</dd>
+								</div>
+							</dl>
+						</section>
+					)}
+					{data.failureStory && (
+						<section class="failure-story" aria-label="Failure to learning to change story">
+							<header class="failure-header">
+								<span class="failure-badge">Failure → Learning → Change</span>
+							</header>
+							<dl class="failure-grid">
+								<div>
+									<dt>What I was trying to do</dt>
+									<dd>{data.failureStory.context}</dd>
+								</div>
+								<div>
+									<dt>What didn't go well</dt>
+									<dd>{data.failureStory.whatHappened}</dd>
+								</div>
+								<div>
+									<dt>What I learned &amp; what I do differently now</dt>
+									<dd>{data.failureStory.learning}</dd>
+								</div>
+							</dl>
+						</section>
+					)}
 					{gallery && (
 						<div class="inline-gallery">
 							<div class="gallery-header">
@@ -67,7 +156,7 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 							<div class:list={['gallery-grid', { 'gallery-grid--wide': gallery.items.length > 2 }]}>
 								{gallery.items.map((img) => (
 									<figure>
-										<img src={img.src} alt={img.alt} loading="lazy" decoding="async" />
+										<img src={withBase(img.src)} alt={img.alt} loading="lazy" decoding="async" />
 										<figcaption>{img.cap}</figcaption>
 									</figure>
 								))}
@@ -85,12 +174,14 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 		margin-bottom: 2rem;
 	}
 	.page-header h1 {
-		margin-bottom: 0.25rem;
+		margin-bottom: 0.5rem;
 	}
 	.lead {
-		font-size: 1.05rem;
-		color: #64748b;
+		font-size: 1.0rem;
+		color: #475569;
+		line-height: 1.55;
 		margin: 0;
+		max-width: 56rem;
 	}
 
 	.projects-list {
@@ -104,6 +195,134 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 	}
 	.project-group:last-child {
 		margin-bottom: 0;
+	}
+
+	.my-contribution {
+		margin-top: 0.75rem;
+		padding: 0.85rem 1.1rem;
+		background: #fef9c3;
+		border: 1px solid #fde68a;
+		border-radius: 0.4rem;
+	}
+	.my-contribution-label {
+		display: block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #92400e;
+		margin-bottom: 0.25rem;
+	}
+	.my-contribution p {
+		margin: 0;
+		font-size: 0.9rem;
+		line-height: 1.5;
+		color: #334155;
+	}
+
+	/* SOAR block */
+	.soar {
+		margin-top: 0.75rem;
+		padding: 1rem 1.15rem;
+		background: #eff6ff;
+		border: 1px solid #bfdbfe;
+		border-radius: 0.4rem;
+	}
+	.soar-header {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+		margin-bottom: 0.6rem;
+		flex-wrap: wrap;
+	}
+	.soar-badge {
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.09em;
+		color: #1d4ed8;
+		padding: 0.15rem 0.5rem;
+		background: #fff;
+		border: 1px solid #bfdbfe;
+		border-radius: 999px;
+	}
+	.soar-sub {
+		font-size: 0.78rem;
+		color: #1e40af;
+	}
+	.soar-grid {
+		margin: 0;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.5rem 1rem;
+	}
+	@media (max-width: 640px) {
+		.soar-grid { grid-template-columns: 1fr; }
+	}
+	.soar-grid > div {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+	.soar-grid dt {
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: #1e3a8a;
+	}
+	.soar-grid dd {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: #1e293b;
+	}
+
+	/* Failure → Learning → Change block */
+	.failure-story {
+		margin-top: 0.75rem;
+		padding: 1rem 1.15rem;
+		background: #fff1f2;
+		border: 1px solid #fecdd3;
+		border-radius: 0.4rem;
+	}
+	.failure-header {
+		margin-bottom: 0.6rem;
+	}
+	.failure-badge {
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.09em;
+		color: #be123c;
+		padding: 0.15rem 0.5rem;
+		background: #fff;
+		border: 1px solid #fecdd3;
+		border-radius: 999px;
+	}
+	.failure-grid {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.55rem;
+	}
+	.failure-grid > div {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+	.failure-grid dt {
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: #9f1239;
+	}
+	.failure-grid dd {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: #1e293b;
 	}
 
 	/* Inline gallery sits directly under its card */

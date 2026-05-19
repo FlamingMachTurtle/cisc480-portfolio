@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Stylized tutoring scene  abstract figures around a notebook">
+	<defs>
+		<linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0%" stop-color="#ecfeff"/>
+			<stop offset="100%" stop-color="#cffafe"/>
+		</linearGradient>
+		<linearGradient id="paperGrad" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0%" stop-color="#fefefe"/>
+			<stop offset="100%" stop-color="#f1f5f9"/>
+		</linearGradient>
+	</defs>
+
+	<rect width="800" height="500" fill="url(#bgGrad)"/>
+
+	<!-- Table -->
+	<rect x="80" y="330" width="640" height="20" rx="4" fill="#94a3b8"/>
+	<rect x="80" y="350" width="640" height="50" fill="#64748b"/>
+
+	<!-- Notebook / paper -->
+	<rect x="270" y="240" width="260" height="100" rx="6" fill="url(#paperGrad)" stroke="#cbd5e1" stroke-width="2"/>
+	<line x1="295" y1="270" x2="510" y2="270" stroke="#cbd5e1" stroke-width="2"/>
+	<line x1="295" y1="290" x2="510" y2="290" stroke="#cbd5e1" stroke-width="2"/>
+	<line x1="295" y1="310" x2="470" y2="310" stroke="#cbd5e1" stroke-width="2"/>
+
+	<!-- Question mark / inquiry icon over notebook -->
+	<circle cx="400" cy="200" r="34" fill="#0891b2"/>
+	<text x="400" y="215" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="bold" text-anchor="middle" fill="#fff">?</text>
+
+	<!-- Tutor (left figure) -->
+	<circle cx="180" cy="200" r="40" fill="#0e7490"/>
+	<rect x="135" y="240" width="90" height="100" rx="20" fill="#155e75"/>
+
+	<!-- Student (right figure) -->
+	<circle cx="620" cy="210" r="36" fill="#f59e0b"/>
+	<rect x="580" y="246" width="80" height="94" rx="18" fill="#d97706"/>
+
+	<!-- Caption -->
+	<text x="400" y="450" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#0f172a">Inquiry-based tutoring · AVID</text>
+	<text x="400" y="475" font-family="Arial, Helvetica, sans-serif" font-size="13" text-anchor="middle" fill="#475569">Stylized illustration  no identifying imagery of minors.</text>
+</svg>

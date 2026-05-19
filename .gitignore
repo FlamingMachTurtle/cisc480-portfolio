@@ -4,3 +4,15 @@
 dist/
 .astro/
 node_modules/
+
+# Legacy root-level images folder is the pre-Astro asset tree and is not
+# served by Astro (only public/images/ is). We additionally exclude
+# images/greenstep/ because the unredacted source screenshots there
+# contain real MPCA emails per HANDOFF.md.
+images/greenstep/
+
+# Redesign workspace screenshots are heavy and live on the
+# redesign/scene-transitions branch only. The audit/spec markdown
+# files inside redesign/ are tracked there; only the screenshot
+# folders are excluded from git everywhere.
+redesign/screenshots/
