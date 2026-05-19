@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy CISC480 Portfolio to GitHub Pages
 
 on:
   push:
-    branches: [main, overhaul/audit-and-research]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

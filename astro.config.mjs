@@ -1,10 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// https://astro.build/config
+// CISC480 Senior Capstone — Individual Portfolio
+// Deployed as a GitHub project page under FlamingMachTurtle.
+// Live URL: https://flamingmachturtle.github.io/cisc480-portfolio/
 export default defineConfig({
 	site: 'https://flamingmachturtle.github.io',
-	// Use base '/' for username.github.io; use '/repo-name/' for project pages
-	base: '/',
+	base: '/cisc480-portfolio/',
 	output: 'static',
+	trailingSlash: 'ignore',
 });
