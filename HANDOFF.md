@@ -25,6 +25,12 @@
 - **Deploy config:** Astro `site: https://flamingmachturtle.github.io`, `base:
   '/cisc480-portfolio/'`. All absolute asset paths run through `withBase()` so the
   site works correctly under the project-page subpath.
+- **Tag of record for the May 20 submission:** `submission-2026-05-20` on `main`
+  (commit `b748233`). Do not move this tag.
+- **Redesign in flight:** branch `redesign/scene-transitions` carries a unified
+  design-token system, a single `<InfoPanel>` primitive, a cinematic
+  `<HeroScene>` with Astro 6 view-transition morphs, and a GSAP body-lift +
+  hero-parallax layer. **Not merged to `main`.** See §7 below.
 
 ---
 
@@ -178,4 +184,55 @@ Before submitting in Canvas:
 | 2026-05-18 | Owner | Selected reflection theme (automation/ethics), failure story (eBay rate-limit), interdisciplinary second (Honey Smitten), repo strategy (`cisc480-portfolio` project page), section 02 |
 | 2026-05-18 | Owner | Provided full capstone YAML brief + 5 screenshots (only 01/04/05 used; 02/03 omitted due to real emails) |
 | 2026-05-18 | Build agent (with owner-provided detail) | A8 closed: Hydreon `myContribution` rewritten to QA-checklist authoring + adventure-map builds (One Block Challenge islands + cube-world rotating-gravity map); description updated to clarify Lifeboat as a Hydreon Corporation sub-brand |
-| | | |
+| 2026-05-18 | Build agent | Submission baseline committed in two atomic commits on `main`: build-config + content-baseline. Tag `submission-2026-05-20` set on the result. Redesign branch `redesign/scene-transitions` cut from the tag (does NOT block submission). |
+| 2026-05-18 | Build agent | Headless puppeteer audit of all four pages → `redesign/audit/visual-baseline.md`. Top finding: GreenStep capstone entry stacks 6 different visual treatments — confirms the user's "AI bolt-on red card" feedback. |
+| 2026-05-18 | Build agent | `redesign/design-spec.md` + `redesign/animation-options.md` written. Decision: editorial paper + cinematic dark hero band, single warm amber accent, one `<InfoPanel>` primitive replacing four ad-hoc panels, Astro 6 View Transitions + GSAP for animation (no React added). |
+| 2026-05-18 | Build agent | Phase 4 implemented in 7 commits on `redesign/scene-transitions`: tokens → layout/card → InfoPanel → projects sweep → HeroScene + page sweep → GSAP/view-transitions → docs. Build clean (4 pages, 0 errors) at every commit. Pink banner deleted. |
+
+---
+
+## 7. Redesign branch notes
+
+The branch `redesign/scene-transitions` (cut from tag `submission-2026-05-20`)
+is intentionally **not merged to `main`**. It carries a non-trivial visual
+overhaul that:
+
+- Replaces the loud pink "CISC480 banner" on home with a cinematic dark
+  `<HeroScene>` at the top of every page (resume excepted — its paper-on-stage
+  aesthetic is preserved).
+- Collapses four ad-hoc panel treatments (`.soar`, `.failure-story`,
+  `.my-contribution`, `.capstone-banner`) into one `<InfoPanel>` primitive
+  with three tones differentiated only by a 3px left rule + label color.
+- Replaces four pastel-fill category badges with one outlined badge.
+- Introduces a single warm amber accent (`#b45309`) and a slate spine
+  consumed via `:root` tokens; no hex codes in component styles.
+- Wires Astro 6 `<ClientRouter />` view transitions + a vanilla GSAP layer
+  for body-content lift on page enter and hero-bg parallax on scroll.
+  Bundle cost: ~71 KB minified (~25 KB gz) for GSAP, plus ~16 KB for the
+  view-transitions polyfill. Acceptable for GH Pages.
+
+Documents on the branch:
+
+- `redesign/audit/visual-baseline.md` — programmatic audit of the
+  submission baseline (every accent color, panel, badge, radius, heading
+  size).
+- `redesign/design-spec.md` — binding spec the implementation followed.
+- `redesign/animation-options.md` — evaluates approach (A) View Transitions
+  + GSAP vs (B) +React island vs (C) full R3F + Theatre.js. Recommended (A);
+  shipped (A). (B) and (C) deferred as Summer 2026 follow-up.
+
+Decision gate **before May 20, 5 PM Canvas cutoff**:
+
+- **Default:** keep `main` at `submission-2026-05-20`. The graded artifact
+  is the unanimated, less-polished but rubric-complete submission. The
+  redesign is *not* what gets graded.
+- **Optional fast-forward** if you want the redesign to be the live site
+  shown to graders: `git checkout main && git merge --ff-only
+  redesign/scene-transitions && git push`. Only do this after confirming
+  the deploy succeeds against the new repo (see §2 owner item) and you
+  have time to verify the live URL.
+- **Recommendation: do not fast-forward before submission.** The redesign
+  is large enough that a regression that only shows up on the live host
+  (subpath asset issues, view-transition behavior in Safari, etc.) is the
+  kind of thing that would eat your last 24 hours. Submit `main`, then
+  decide post-grading whether to fast-forward as a portfolio refresh.
