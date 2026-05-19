@@ -1,0 +1,143 @@
+---
+/**
+ * InfoPanel — single replacement for the four ad-hoc panels flagged in
+ * redesign/audit/visual-baseline.md §3:
+ *   .soar              -> <InfoPanel tone="accent" ...>
+ *   .failure-story     -> <InfoPanel tone="muted" ...>
+ *   .my-contribution   -> <InfoPanel tone="neutral" ...>
+ *   .capstone-banner   -> moves into <HeroScene eyebrow="..." />
+ *                         (this component is no longer used for it)
+ *
+ * Visual rules (per design-spec.md §3.1):
+ *   - Background is always var(--color-surface) regardless of tone.
+ *   - Differentiator is a 3px left rule + the label color.
+ *   - Header label is small-caps in --tracking-caps.
+ *   - No tinted backgrounds. No header pills. No colored borders all
+ *     around. The whole point is to read as one panel family.
+ */
+interface Props {
+	tone?: 'neutral' | 'accent' | 'muted';
+	label?: string;
+	sublabel?: string;
+	/** Override <aside> with a different element (e.g. 'section'). */
+	as?: 'aside' | 'section' | 'div';
+}
+const {
+	tone = 'neutral',
+	label,
+	sublabel,
+	as: Tag = 'aside',
+} = Astro.props;
+---
+
+<Tag class:list={['info-panel', `info-panel--${tone}`]}>
+	{label && (
+		<header class="info-panel__head">
+			<span class="info-panel__label">{label}</span>
+			{sublabel && <span class="info-panel__sub">{sublabel}</span>}
+		</header>
+	)}
+	<div class="info-panel__body">
+		<slot />
+	</div>
+</Tag>
+
+<style>
+	.info-panel {
+		--rule-color: var(--color-border-strong);
+		--label-color: var(--color-text);
+		position: relative;
+		margin-top: var(--space-sm);
+		padding: var(--space-md) var(--space-lg);
+		background: var(--color-surface);
+		border-radius: var(--radius-md);
+		box-shadow: inset 3px 0 0 var(--rule-color);
+	}
+
+	.info-panel--accent {
+		--rule-color: var(--color-accent);
+		--label-color: var(--color-accent);
+	}
+	.info-panel--muted {
+		--rule-color: var(--color-border-strong);
+		--label-color: var(--color-text-muted);
+	}
+
+	.info-panel__head {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-sm);
+		flex-wrap: wrap;
+		margin-bottom: var(--space-xs);
+	}
+	.info-panel__label {
+		font-size: var(--fs-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-caps);
+		color: var(--label-color);
+	}
+	.info-panel__sub {
+		font-size: var(--fs-xs);
+		color: var(--color-text-subtle);
+	}
+
+	.info-panel__body :global(*:first-child) { margin-top: 0; }
+	.info-panel__body :global(*:last-child)  { margin-bottom: 0; }
+
+	/* When the panel hosts a <dl> grid (SOAR uses this), give it
+	   sensible defaults so consumers don't have to repeat them. */
+	.info-panel__body :global(dl.kv-grid) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-sm) var(--space-md);
+		margin: 0;
+	}
+	@media (max-width: 640px) {
+		.info-panel__body :global(dl.kv-grid) { grid-template-columns: 1fr; }
+	}
+	.info-panel__body :global(dl.kv-grid > div) {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2xs);
+	}
+	.info-panel__body :global(dl.kv-grid dt) {
+		font-size: var(--fs-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: var(--color-text-subtle);
+	}
+	.info-panel__body :global(dl.kv-grid dd) {
+		margin: 0;
+		font-size: var(--fs-sm);
+		line-height: var(--lh-snug);
+		color: var(--color-text);
+	}
+
+	/* Stacked variant for the failure story (asymmetric content). */
+	.info-panel__body :global(dl.kv-stack) {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+		margin: 0;
+	}
+	.info-panel__body :global(dl.kv-stack > div) {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2xs);
+	}
+	.info-panel__body :global(dl.kv-stack dt) {
+		font-size: var(--fs-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: var(--color-text-subtle);
+	}
+	.info-panel__body :global(dl.kv-stack dd) {
+		margin: 0;
+		font-size: var(--fs-sm);
+		line-height: var(--lh-snug);
+		color: var(--color-text);
+	}
+</style>
