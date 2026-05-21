@@ -32,8 +32,6 @@ This work needs at least three explicit disciplines to be done responsibly, plus
 
 ## Portfolio Examples Showing Growth
 
-Four entries in my portfolio are the clearest evidence that these lenses sharpen each other.
-
 **The CISC480 GreenStep capstone** is the integrating example. As one of four engineers building an admin console for Minnesota Pollution Control Agency staff, I scaffolded the React + Supabase app, owned the 22-widget customizable dashboard, and led the v0.7 cleanup that decomposed six 300+-line page components into a documented architecture. The ethics work — audit-log entries written *before* deletes, RLS policies underneath the SuperAdmin route, deactivate-by-default everywhere — is the part I am proudest of, because it shows the discipline of asking "who is this safe for?" before "is this fast?"
 
 **The eBay store image standardization pipeline** is where I learned to treat external APIs as first-class infrastructure. The first version failed embarrassingly: I pushed a big batch through the eBay Trading API against a client's live store with no dry-run, the rate limiter tripped midway, and I had to reconstruct what had actually been applied versus rejected. The lesson is in every project I have built since — dry-run mode, idempotent logs, rate-limit-aware queues — and is exactly why the redesigned pipeline now ships at a 100% production success rate. That story is the kind of *failure → learning → change* I would tell any interviewer.
@@ -44,9 +42,9 @@ Four entries in my portfolio are the clearest evidence that these lenses sharpen
 
 ## How St. Thomas Prepared Me, and What I'll Do With It
 
-St. Thomas prepared me for this in a way I did not see at the time. The CS curriculum interleaves with a liberal-arts core that takes ethics, theology, philosophy, and language seriously, which is the only reason those four lenses feel like one job instead of four. The capstone class itself enforced the integrative part — a real client, a real team of four, a real semester, real coordination friction with a separate team on the shared schema — and the AVID service-learning placement gave me the outside-CS hours that keep the work honest.
+St. Thomas prepared me for this in a way I did not see at the time. The CS curriculum interleaves with a liberal-arts core that takes ethics, theology, philosophy, and language seriously, which is the only reason those four lenses feel like one job instead of four. The capstone class itself enforced the integrative part — a real client, a real team of four, a real semester, real coordination friction with a separate team on the shared schema — and the AVID tutoring side job (separate from St. Thomas) gave me the outside-CS hours that keep the work honest.
 
-What's next is concrete. I plan to grow **Big Chuck Data LLC** into a sustainable consultancy that serves small-business clients end-to-end without overcharging or over-automating. I plan to keep pushing toward medical and mental-health technology contributions, where the same posture — automate the boring parts, leave the human parts to humans, make the destructive actions hard to do by accident — matters even more than it does on a store inventory or a city sustainability dashboard. And I plan to keep doing service-learning work alongside the technical work, because the two sharpen each other.
+What's next is concrete. I plan to grow **Big Chuck Data LLC** into a sustainable consultancy that serves small-business clients end-to-end without overcharging or over-automating. I plan to keep pushing toward medical and mental-health technology contributions, where the same posture — automate the boring parts, leave the human parts to humans, make the destructive actions hard to do by accident — matters even more than it does on a store inventory or a city sustainability dashboard. And I plan to keep tutoring alongside the technical work, because the two sharpen each other.
 
 ## Closing
 

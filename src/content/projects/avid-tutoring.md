@@ -1,13 +1,15 @@
 ---
 sortOrder: 6
 category: outside-cs
-title: AVID Tutoring — Service Learning
+title: AVID Tutoring — 1:1 & Small-Group Instruction
 description: >-
-  AVID tutor (Fall 2025 – Present) providing 1:1 and small-group support to
-  middle-schoolers across multiple sites. I use inquiry-based questioning to
-  build independent problem-solving instead of handing over answers, and
-  adapt to each classroom's culture. An explicitly outside-CS entry — but
-  the work that most reshapes how I build software for non-technical users.
+  Paid AVID tutor (Fall 2025 – Present, side job I picked up alongside
+  the degree — not a service-learning placement) providing 1:1 and
+  small-group support to middle-schoolers across multiple sites. I use
+  inquiry-based questioning to build independent problem-solving instead
+  of handing over answers, and adapt to each classroom's culture. An
+  explicitly outside-CS entry — but the work that most reshapes how I
+  build software for non-technical users.
 tech:
   - Inquiry-based questioning
   - 1:1 instruction
@@ -15,7 +17,7 @@ tech:
   - Routines & expectations
   - Cross-site adaptation
 keywords:
-  - Service learning
+  - Tutoring
   - Education
   - AVID
   - Mentorship

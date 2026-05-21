@@ -27,7 +27,7 @@
   composition: 4 CS, 2 interdisciplinary, 1 outside-CS, 1 capstone. SOAR ×3
   (capstone + eBay + NutriBot), failure-story ×2 (eBay rate-limit + capstone v0.7.2),
   myContribution callout on Hydreon and on the capstone.
-- **Reflection essay:** 1194 words (in the 1000–1200 range), theme = practical /
+- **Reflection essay:** 1192 words (in the 1000–1200 range), theme = practical /
   ethical automation for small businesses and underserved users, disciplines named
   = CS + Business + Ethics + Education, ≥ 3 portfolio examples, ≥ 1 failure story,
   explicit St. Thomas / common-good tie-in.
@@ -58,7 +58,7 @@
 | A8 | Personal contribution callout on Hydreon | ✅ Done | `src/content/projects/hydreon-minecraft.md` — owns QA-checklist authoring + adventure-map builds (One Block Challenge islands + cube-world map with rotating per-face gravity) |
 | A9 | CISC480 capstone entry | ✅ Done | `src/content/projects/cisc480-capstone.md` (GreenStep Admin Console). Full SOAR + failure story + myContribution. `sortOrder: 0` so it appears first |
 | A10 | Fix `resue.pdf` → `resume.pdf` | ✅ Done | Renamed + all 4 refs in `src/pages/resume/index.astro` updated to use `withBase()` |
-| A11 | Replace README with reflection; move technical README to `docs/DEVELOPMENT.md` | ✅ Done | 1194 words, academic-honesty statement included, name/class/section in header |
+| A11 | Replace README with reflection; move technical README to `docs/DEVELOPMENT.md` | ✅ Done | 1192 words (was 1194; trimmed during the 2026-05-20 AVID misattribution fix — see §6), academic-honesty statement included, name/class/section in header |
 
 ---
 
@@ -91,7 +91,7 @@
 
 ```
 .
-├── README.md                           # ⭐ The graded reflection essay (1194 words)
+├── README.md                           # ⭐ The graded reflection essay (1192 words)
 ├── HANDOFF.md                          # This file
 ├── astro.config.mjs                    # site + base configured for project page
 ├── package.json
@@ -153,7 +153,7 @@ Before submitting in Canvas:
 - [x] Group projects have a personal-contribution callout (capstone ✅, Hydreon ✅)
 - [x] CISC480 capstone project included (GreenStep Admin Console, sortOrder 0)
 - [x] Resume link/visualization on the site (HTML view + PDF download/print)
-- [x] Reflection 1000–1200 words (1194)
+- [x] Reflection 1000–1200 words (1192)
 - [x] Reflection names ≥ 2 disciplines explicitly (CS + Business + Ethics + Education)
 - [x] Reflection ties to St. Thomas mission / common good
 - [x] Reflection includes ≥ 1 failure → learning → change story
@@ -174,7 +174,7 @@ Before submitting in Canvas:
 | Portfolio Structure & Organization | 5.0 | **5.0** | All sections present, intuitive nav, polished GH Pages (live verified), capstone-banner sets context |
 | Content Quality & Breadth | 5.0 | **5.0** | 8 entries, all fields, badges visible, composition exceeds floor, both group projects (capstone + Hydreon) have personal-contribution callouts |
 | Interview-Ready Narratives | 5.0 | **5.0** | 3 SOAR entries with detail, 2 failure stories, About Me hits the ACM pattern explicitly |
-| Reflection Content / Integrative Growth | 5.0 | **5.0** | 1194 words, 4 disciplines named, 4 portfolio examples, capstone failure story doubled in essay |
+| Reflection Content / Integrative Growth | 5.0 | **5.0** | 1192 words, 4 disciplines named, 4 portfolio examples, capstone failure story doubled in essay |
 | Professional Development & Writing Quality | 5.0 | **5.0** | Polished, voice-consistent, interview-framed examples |
 | **Total / 25** | **25** | **25.0** (deploy verified live) | |
 
@@ -202,6 +202,7 @@ Before submitting in Canvas:
 | 2026-05-20 | Audit agent (owner-prompted) | Repo + site audit against the May 20 PDF. Found that the `cisc480-portfolio` repo had never been created and the live URL was 404; the legacy user-page repo was serving the submission HTML but with all asset/nav links pointing to a non-existent `/cisc480-portfolio/` subpath. Content was rubric-complete; only the deployment plumbing was missing. |
 | 2026-05-20 | Bootstrap agent | Executed the §2 item #1 plan ("1A"). Preserved post-baseline redesign WIP as commit `8b09319` on `redesign/scene-transitions` (pushed to legacy origin). Switched to `main` (`b748233`, clean tree). Created public repo `FlamingMachTurtle/cisc480-portfolio` via `gh repo create`. Added second git remote `cisc480` (kept `origin` pointing at the legacy user-page repo). Pushed `main` and tag `submission-2026-05-20`. Enabled Pages via `gh api PUT /repos/.../pages -f build_type=workflow`. Watched the auto-triggered deploy workflow to green (build 16s, deploy 10s). Verified all 4 routes + sampled assets return 200 against <https://flamingmachturtle.github.io/cisc480-portfolio/>. |
 | 2026-05-20 | Bootstrap agent (owner-prompted) | Owner observed the deployed site was the unanimated submission baseline, not the redesign they'd been previewing locally. Confirmed branch swap intent ("1A" had implicitly inherited HANDOFF §7's "ship `main`" default; owner wanted the V6.x redesign). Build-tested `redesign/scene-transitions` locally (4 pages, 0 errors, 1.6s). Merged `redesign/scene-transitions` into `main` with `--no-ff` (resolved a HANDOFF.md conflict by keeping the union of both branches' status logs). Submission tag `submission-2026-05-20` left at `b748233` so the rubric-of-record / rollback target is unchanged. Pushed merged `main` to `cisc480`; deploy workflow re-triggered and went green. Verified the same 8 routes/assets + redesign-specific artifacts (hero bg, marquee, view-transitions polyfill chunk) return 200 on the live host. |
+| 2026-05-20 | Content-correction agent (owner-reported) | **AVID misattribution fix.** Owner flagged that the reflection essay and several site strings labeled AVID tutoring as "service learning" / "the AVID service-learning placement" — implying St. Thomas had placed him in the role, when in fact AVID is an unrelated paid side job he picked up on his own alongside the degree. Touched 4 files: (1) `README.md` reflection essay — rewrote the closing paragraph's AVID sentence to "the AVID tutoring side job (separate from St. Thomas) gave me the outside-CS hours that keep the work honest" and rewrote the future-plans sentence from "service-learning work" to "tutoring"; also removed the now-redundant section-opener "Four entries in my portfolio are the clearest evidence..." to keep the essay under the 1200-word ceiling (recount: 1192 wds, was 1194 pre-edit per HANDOFF, drifted to 1213 mid-edit before trim). (2) `src/content/projects/avid-tutoring.md` — retitled "AVID Tutoring — Service Learning" → "AVID Tutoring — 1:1 & Small-Group Instruction", added an explicit "side job I picked up alongside the degree — not a service-learning placement" clause to the description, dropped "Service learning" from keywords and replaced with "Tutoring". (3) `src/pages/projects/index.astro` — meta description: "service learning" → "tutoring". (4) `src/pages/index.astro` — Skills intro: "Pulled from coursework, paid work, and service learning" → "Pulled from coursework, paid work, and tutoring"; Goals bullet: "Keep service-learning alongside the technical work" → "Keep the teaching and tutoring work alongside the technical work". Audit doc `redesign/audit/about-and-stats-v6.md` left alone (historical record). Resume page untouched (already accurate — just says "AVID Tutoring" / "Tutor", no service-learning claim). Build clean (4 pages, 0 errors). The submission tag `submission-2026-05-20` is unchanged; this correction lives on a post-tag commit. |
 | | | |
 
 ---
