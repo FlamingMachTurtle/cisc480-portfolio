@@ -1,5 +1,6 @@
 ---
 import { withBase } from '../lib/url';
+import TechBadge from './TechBadge.astro';
 
 interface Props {
 	title: string;
@@ -11,6 +12,11 @@ interface Props {
 	imageAlt: string;
 	imageFirst?: boolean;
 	demoUrl?: string;
+	/**
+	 * Stable id used for the per-project view-transition name on the
+	 * media image. Pass `entry.id` from the projects collection.
+	 */
+	transitionId?: string;
 }
 
 const {
@@ -23,6 +29,7 @@ const {
 	imageAlt,
 	imageFirst = false,
 	demoUrl,
+	transitionId,
 } = Astro.props;
 
 const categoryLabel: Record<NonNullable<Props['category']>, string> = {
@@ -33,7 +40,7 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 };
 ---
 
-<article class:list={['card', { 'card--reversed': imageFirst }]}>
+<article class:list={['card', { 'card--reversed': imageFirst, 'card--capstone': category === 'capstone' }]}>
 	<div class="card-body">
 		{category && (
 			<span class:list={['card-badge', `card-badge--${category}`]}>{categoryLabel[category]}</span>
@@ -43,13 +50,13 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		{tech.length > 0 && (
 			<ul class="card-tech" aria-label="Tech and skills">
 				{tech.map((t) => (
-					<li>{t}</li>
+					<li><TechBadge name={t} /></li>
 				))}
 			</ul>
 		)}
 		{keywords.length > 0 && (
 			<div class="card-keywords">
-				<span class="card-keywords-label">Keywords:</span>
+				<span class="card-keywords-label">Keywords</span>
 				<ul class="card-keyword-list" aria-label="Project keywords">
 					{keywords.map((k) => (
 						<li>{k}</li>
@@ -60,12 +67,18 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		{demoUrl && (
 			<a href={demoUrl} class="card-link" target="_blank" rel="noopener">
 				View showcase
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
 			</a>
 		)}
 	</div>
 	<div class="card-media">
-		<img src={withBase(image)} alt={imageAlt} loading="lazy" decoding="async" />
+		<img
+			src={withBase(image)}
+			alt={imageAlt}
+			loading="lazy"
+			decoding="async"
+			transition:name={transitionId ? `project-${transitionId}` : undefined}
+		/>
 	</div>
 </article>
 
@@ -74,108 +87,110 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 0;
-		background: #fff;
-		border: 1px solid #e2e8f0;
-		border-radius: 0.5rem;
+		background: var(--color-surface-raised);
+		/* Stronger baseline border (slate-300) + a baseline shadow so
+		   the card pops off the white page bg even at rest, and the
+		   contrast between focused and inactive timeline states reads
+		   clearly. Was 1px var(--color-border) (slate-200) which
+		   blended into #ffffff page bg. */
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-2);
 		overflow: hidden;
-		transition: box-shadow 0.2s;
+		transition: box-shadow 0.25s ease, border-color 0.25s ease,
+			transform 0.25s ease;
+		will-change: transform;
 	}
+	/* Hover lift — every card gets a translate + stronger shadow
+	   promotion on hover so clickability is unambiguous. */
 	.card:hover {
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-3);
+		border-color: var(--color-text-subtle);
 	}
-	.card--reversed {
-		direction: rtl;
+	.card:focus-within {
+		box-shadow: var(--shadow-3);
+		border-color: var(--color-accent);
 	}
-	.card--reversed > * {
-		direction: ltr;
+	/* When the parent project group is the timeline-active item, the
+	   card border picks up the accent so the focus state is visible
+	   without scrolling — the user's "things need more distinction"
+	   ask answered explicitly. */
+	:global(.project-group--active) .card {
+		border-color: var(--color-text-subtle);
+		box-shadow: var(--shadow-3);
 	}
+	.card--reversed { direction: rtl; }
+	.card--reversed > * { direction: ltr; }
 
 	.card-body {
-		padding: 1.75rem 1.5rem;
+		padding: var(--space-lg) var(--space-lg);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 	}
 
+	/* Outlined-only badge: same shape, color is the only differentiator,
+	   no pastel fills. Replaces the four pastel pills flagged in audit §4. */
 	.card-badge {
 		align-self: flex-start;
-		font-size: 0.68rem;
+		font-size: var(--fs-2xs);
 		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		padding: 0.2rem 0.55rem;
-		border-radius: 999px;
-		margin-bottom: 0.55rem;
-		border: 1px solid transparent;
-	}
-	.card-badge--cs {
-		background: #eff6ff;
-		color: #1d4ed8;
-		border-color: #bfdbfe;
-	}
-	.card-badge--interdisciplinary {
-		background: #fef3c7;
-		color: #b45309;
-		border-color: #fde68a;
-	}
-	.card-badge--outside-cs {
-		background: #dcfce7;
-		color: #15803d;
-		border-color: #bbf7d0;
+		letter-spacing: var(--tracking-caps);
+		padding: 0.2rem 0.6rem;
+		border-radius: var(--radius-pill);
+		margin-bottom: var(--space-xs);
+		background: transparent;
+		color: var(--color-text-muted);
+		border: 1px solid var(--color-border-strong);
 	}
 	.card-badge--capstone {
-		background: #fce7f3;
-		color: #be185d;
-		border-color: #fbcfe8;
+		color: var(--color-accent);
+		border-color: var(--color-accent);
 	}
 
 	.card-title {
-		font-size: 1.25rem;
+		font-size: var(--fs-lg);
 		font-weight: 700;
-		margin: 0 0 0.6rem;
-		color: #0f172a;
-		line-height: 1.3;
+		margin: 0 0 var(--space-xs);
+		color: var(--color-text);
+		line-height: var(--lh-tight);
 	}
 
 	.card-desc {
-		font-size: 0.9rem;
-		line-height: 1.55;
-		color: #334155;
-		margin: 0 0 0.75rem;
+		font-size: var(--fs-sm);
+		line-height: var(--lh-snug);
+		color: var(--color-text-muted);
+		margin: 0 0 var(--space-sm);
 		white-space: pre-line;
 	}
 
 	.card-tech {
 		list-style: none;
-		margin: 0 0 0.75rem;
+		margin: 0 0 var(--space-sm);
 		padding: 0;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.35rem;
+		gap: var(--space-2xs);
 	}
 	.card-tech li {
-		font-size: 0.75rem;
-		padding: 0.2rem 0.6rem;
-		background: #f1f5f9;
-		border: 1px solid #e2e8f0;
-		border-radius: 999px;
-		color: #475569;
-		white-space: nowrap;
+		display: inline-flex;
 	}
 
 	.card-keywords {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: baseline;
-		gap: 0.4rem;
-		margin: 0 0 0.75rem;
+		gap: var(--space-xs);
+		margin: 0 0 var(--space-sm);
 	}
 	.card-keywords-label {
-		font-size: 0.7rem;
+		font-size: var(--fs-2xs);
 		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: #64748b;
+		letter-spacing: var(--tracking-caps);
+		color: var(--color-text-subtle);
 	}
 	.card-keyword-list {
 		list-style: none;
@@ -183,28 +198,29 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		padding: 0;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.3rem;
+		gap: var(--space-2xs);
 	}
 	.card-keyword-list li {
-		font-size: 0.7rem;
+		font-size: var(--fs-2xs);
 		padding: 0.15rem 0.5rem;
-		background: #fff;
-		border: 1px dashed #cbd5e1;
-		border-radius: 0.25rem;
-		color: #334155;
+		background: transparent;
+		border: 1px dashed var(--color-border-strong);
+		border-radius: var(--radius-sm);
+		color: var(--color-text-muted);
 	}
 
 	.card-link {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
-		font-size: 0.88rem;
+		gap: var(--space-2xs);
+		font-size: var(--fs-sm);
 		font-weight: 500;
-		color: #2563eb;
+		color: var(--color-accent);
 		text-decoration: none;
 		margin-top: auto;
 	}
 	.card-link:hover {
+		color: var(--color-accent-hover);
 		text-decoration: underline;
 	}
 
@@ -212,7 +228,7 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		position: relative;
 		overflow: hidden;
 		height: 16rem;
-		background: #f1f5f9;
+		background: var(--color-surface);
 		flex-shrink: 0;
 	}
 	.card-media img {
@@ -220,22 +236,24 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		height: 100%;
 		object-fit: cover;
 		display: block;
+		transition: transform 0.5s ease;
+	}
+	.card:hover .card-media img {
+		transform: scale(1.03);
 	}
 
 	@media (max-width: 640px) {
 		.card {
 			grid-template-columns: 1fr;
 		}
-		.card--reversed {
-			direction: ltr;
-		}
+		.card--reversed { direction: ltr; }
 		.card-media {
 			min-height: 12rem;
 			max-height: 16rem;
 			order: -1;
 		}
 		.card-body {
-			padding: 1.25rem 1rem;
+			padding: var(--space-md);
 		}
 	}
 </style>

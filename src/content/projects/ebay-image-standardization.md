@@ -3,13 +3,10 @@ sortOrder: 1
 category: cs
 title: eBay Store Image Standardization System
 description: >-
-  A Python automation pipeline that integrates with the eBay Trading API to
-  standardize product imagery across an entire active store inventory — consistent
-  square crops, padding color, logo placement, and border style. A companion
-  Aurora processor web interface lets the store owner preview their choices
-  before committing, and a scheduled service quietly processes new listings
-  overnight. Keywords: Python, eBay Trading API, automation, image processing,
-  rate limiting, caching, scheduled jobs, small-business operations.
+  A Python pipeline against the eBay Trading API that standardizes product
+  imagery across an active store — consistent square crops, padding, logo,
+  and border. A companion Aurora preview UI lets the owner approve choices
+  before commit, and a scheduled service handles new listings overnight.
 tech:
   - Python
   - eBay Trading API

@@ -8,8 +8,23 @@ This file holds the technical README that used to live at the repo root. It is i
 
 - **Astro v6** (static output)
 - Content collections: `src/content/projects/*.md`, schema in `src/content.config.ts`
-- Shared layout: `src/layouts/BaseLayout.astro` — sticky nav, skip link, OG/canonical meta
-- Components: `src/components/ProjectCard.astro`
+- Shared layout: `src/layouts/BaseLayout.astro` — sticky nav (transparent over hero, opaque past it), skip link, OG/canonical meta, `<ClientRouter />` for view transitions
+- Components:
+  - `src/components/ProjectCard.astro` — outlined-only category badge, baseline shadow-2 + slate-300 border (so the card lifts off the white page bg), hover-lift micro-interaction (translateY + shadow promote), `transition:name` on the card image for view-transition morphs
+  - `src/components/InfoPanel.astro` — editorial section primitive. Three tones (`neutral`, `accent`, `muted`) differentiated **only** by label color and an optional mono `01 / 02 / 03` index — no left rule, no tinted background, just a 1px hairline rule above and a small-caps kicker (post-V2 redesign; see `redesign/audit/ai-tells.md` for the rationale)
+  - `src/components/InfoDisclosure.astro` — same editorial language as `InfoPanel`, but the body sits behind a native `<details>` so dense content (the failure-story `What I learned` block) is collapsed by default with a "Click to expand ↓" affordance + hover bg tint. Animated open/close via CSS `interpolate-size` where supported, instant toggle elsewhere
+  - `src/components/TechIcon.astro` — inline brand SVG glyph (paths sourced from `simple-icons`). Renders monochrome via `currentColor` and exposes the brand hex as a `--brand` CSS custom property on the `<svg>` so parents can swap to brand color on hover without re-rendering
+  - `src/components/TechBadge.astro` — pill that pairs a `TechIcon` with a label. Two variants (`chip` for inline tech-list use; `block` for stacked icon-over-label cards). Falls back to text-only badge for tech names with no registered icon (so abstract skills like "Inquiry-based questioning" still render cleanly)
+  - `src/components/TechMarquee.astro` — CSS-only infinite horizontal lockup of the tools in active rotation, now rendered via `<TechBadge />` so each pill carries a real brand SVG. Pauses on hover; respects `prefers-reduced-motion`
+  - `src/components/StatStrip.astro` — "by the numbers" lockup. Takes a `stats: { value, suffix?, label, sublabel? }[]` prop, renders Geist Mono numbers above uppercase labels in an `auto-fit, minmax(11rem, 1fr)` row with hairline column dividers. SSR renders the final values; an `IntersectionObserver` + `requestAnimationFrame` count-up runs once when the strip enters the viewport (~1500ms linear). A `data-stat-bound` flag prevents double-binding when both the inline call and `astro:page-load` invoke the script. Honors `prefers-reduced-motion: reduce` by returning before any DOM mutation
+  - `src/components/HeroScene.astro` — full-bleed dark cinematic band atop home / projects / fun pages, with optional photographic backdrop and `transition:name="hero-scene"` for cross-page morphs
+- React islands (`src/components/react/`, hydrated client-side via `@astrojs/react`):
+  - `ScrollReveal.tsx` — wraps a section in a Framer Motion `useInView` fade-up (16px Y translate + opacity 0→1, fires once). Used on home sections (the projects page got a stronger entry signal via the timeline rail in V5 and no longer wraps individual entries in `ScrollReveal`)
+  - `SOARTabs.tsx` — replaces the always-visible 4-quadrant SOAR grid with a tabbed disclosure (Situation / Obstacle / Action / Result). Animated active-tab underline via Framer Motion shared layout, hover bg + hairline preview on inactive tabs, full WAI-ARIA tabs pattern with arrow-key roving focus
+  - `ProjectGalleryCarousel.tsx` — Embla-powered carousel for project entries with > 2 gallery images. Snap-scroll, dot pagination, keyboard navigation, ARIA carousel role
+- Tech-icon registry: `src/lib/tech-icons.ts` maps human-readable tech names from `src/content/projects/*.md` (and the home Skills list) to `simple-icons` path data + brand hex. Gracefully returns `null` for unknown names; callers fall back to text-only badges
+- Projects timeline: pure CSS + ~40 lines of vanilla JS in `src/pages/projects/index.astro` drive a left-edge vertical rail with numbered nodes. The amber rail fill height tracks scroll progress through the list; a RAF-throttled scroll handler toggles `.project-group--active` and `.project-group--past` classes so the active project pops in opacity + node fill while non-active entries dim. The handler tears down on `astro:before-swap` and re-binds on `astro:page-load` so it survives `<ClientRouter />` route swaps. Honors `prefers-reduced-motion`
+- Animation: `src/scripts/scene.ts` (vanilla GSAP) — body-content lift on page enter, hero-bg parallax on scroll, full `prefers-reduced-motion` support, re-bound on every `astro:page-load`
 - Path helper: `src/lib/url.ts` — `withBase()` prepends `import.meta.env.BASE_URL` so the site survives the `/cisc480-portfolio/` project-page subpath
 - Deploy: `.github/workflows/deploy.yml` — GitHub Actions → GitHub Pages
 
@@ -51,10 +66,10 @@ Markdown project entries store unprefixed paths (e.g., `image: /images/cruz-afte
 `src/content.config.ts` adds these fields beyond the basics:
 
 - `keywords?: string[]` — rendered as visible dashed tags under the tech list
-- `category?: 'cs' | 'interdisciplinary' | 'outside-cs' | 'capstone'` — drives the colored badge in the top-left of the card
-- `myContribution?: string` — renders as a highlighted yellow callout under the card (use for group-project entries)
-- `soar?: { situation, obstacle, action, result }` — renders as a structured blue block
-- `failureStory?: { context, whatHappened, learning }` — renders as a structured pink block
+- `category?: 'cs' | 'interdisciplinary' | 'outside-cs' | 'capstone'` — drives the badge in the top-left of the card. As of the redesign, the badge is outlined-only (no pastel fill); only `capstone` uses the warm amber accent color
+- `myContribution?: string` — renders as `<InfoPanel tone="neutral" index="01" label="Contribution">`
+- `soar?: { situation, obstacle, action, result }` — renders as `<InfoPanel tone="accent" index="02" label="Approach (SOAR)">` wrapping a `<SOARTabs />` React island. Only one of the four steps is visible at a time; readers click a tab to swap the panel content. This is the only accent-toned section in a typical entry, marking it as the most important
+- `failureStory?: { context, whatHappened, learning }` — renders as `<InfoDisclosure tone="muted" index="03" label="What I learned">`. Collapsed by default — readers opt in. Deliberately quieter than SOAR; important content shouldn't be the most aggressive content
 
 ## Adding a project entry
 
@@ -65,12 +80,57 @@ Markdown project entries store unprefixed paths (e.g., `image: /images/cruz-afte
 5. If the entry is a group project, fill in `myContribution`.
 6. If it needs an inline gallery, add a new key to the `galleries` map in `src/pages/projects/index.astro` matching the file's slug.
 
+## Design system (post-redesign)
+
+All visual decisions live as CSS custom properties in `src/styles/global.css` `:root`. Component styles consume tokens via `var(--token-name)`; **no hex codes are allowed in component-scoped styles** outside of `:root` itself. The full spec is at [`redesign/design-spec.md`](../redesign/design-spec.md) (only checked in on the `redesign/scene-transitions` branch).
+
+Token quick reference:
+
+```
+Color spine     --color-text             #0f172a (slate-900)
+                --color-text-muted       #475569 (slate-600)
+                --color-text-subtle      #94a3b8 (slate-400)
+Surfaces        --color-bg               #ffffff
+                --color-surface          #f8fafc (slate-50)
+                --color-stage            #f1f3f5 (resume page)
+Hero band       --color-hero-bg          #0b1220 (near-black)
+                --color-hero-text        #f8fafc
+                --color-accent-on-dark   #fbbf24 (amber-400)
+Lines           --color-border           #e2e8f0
+                --color-border-strong    #cbd5e1
+Accent (one)    --color-accent           #b45309 (amber-700)
+                --color-accent-hover     #92400e
+Type scale      --fs-2xs through --fs-3xl on a 1.250 modular ratio
+Spacing         --space-2xs through --space-3xl
+Radius          --radius-sm 4 / --radius-md 8 / --radius-pill 999
+```
+
+The audit that drove the redesign and the binding spec are checked into the `redesign/scene-transitions` branch under `redesign/`. They are not on `main` (so the graded artifact stays clean).
+
+## View transitions and animation
+
+Astro 6's `<ClientRouter />` handles cross-page shared-element morphs natively. To opt an element into the morph, give two pages the same `transition:name`:
+
+```astro
+---
+import { ClientRouter } from 'astro:transitions';
+import { fade } from 'astro:transitions';
+---
+<HeroScene title="..." bgImage="/images/..." />
+<!-- HeroScene internally emits transition:name="hero-scene"
+     on the section and transition:name="hero-scene-bg" on the
+     bg image. -->
+```
+
+The vanilla GSAP layer in `src/scripts/scene.ts` complements this with body-content lift on enter and a hero-bg parallax tied to scroll position. It re-binds on every `astro:page-load` event and tears down listeners on `astro:before-swap`. All animations short-circuit when `prefers-reduced-motion: reduce` is set.
+
 ## Documentation history
 
 - [`docs/legacy/REPO_OVERHAUL_AUDIT.md`](legacy/REPO_OVERHAUL_AUDIT.md) — inherited technical audit
 - [`docs/legacy/SITE_ANALYSIS_AND_IMPROVEMENT_PLAN.md`](legacy/SITE_ANALYSIS_AND_IMPROVEMENT_PLAN.md) — inherited improvement-plan rubric
 - [`docs/legacy/AI_RESEARCH_PROMPT.md`](legacy/AI_RESEARCH_PROMPT.md) — inherited prompt artifact (not relevant to CISC480 submission)
 - [`HANDOFF.md`](../HANDOFF.md) — the agent handoff used to drive this submission build
+- `redesign/audit/visual-baseline.md`, `redesign/design-spec.md`, `redesign/animation-options.md` — present on `redesign/scene-transitions` branch only
 
 ## CI / Deploy
 

@@ -3,11 +3,9 @@ sortOrder: 3
 category: cs
 title: SwiftUI Photo Management & Filtering Interface
 description: >-
-  A SwiftUI photo filtering and album management workflow built for a 3D screen
-  protector app. The interface helps users sort image collections for optimal
-  3D viewing — favorites, albums, and filtering all behave the way iOS users
-  already expect, so the 3D-specific workflow stays out of the way. Keywords:
-  SwiftUI, iOS, photo management, filtering, album organization, native UX.
+  A SwiftUI photo filtering and album workflow built for a 3D screen-
+  protector app. Favorites, albums, and filtering all behave the way iOS
+  users already expect, so the 3D-specific sorting stays out of the way.
 tech:
   - SwiftUI
   - iOS development

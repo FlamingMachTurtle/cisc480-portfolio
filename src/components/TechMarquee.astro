@@ -1,0 +1,155 @@
+---
+/**
+ * TechMarquee — infinite-scroll horizontal lockup of the tech stack
+ * used across projects. Inspired by the user's reference site and
+ * react-bits' Logo Loop component. CSS-only (no React, no JS),
+ * pause-on-hover, prefers-reduced-motion stops it.
+ *
+ * Each item is rendered through <TechBadge> with the brand SVG icon
+ * so the marquee actually doubles as a logo strip — names that have
+ * a registered icon show the brand logo (monochrome, brand-color on
+ * hover); names without an icon render as text-only badges in the
+ * same pill shape so the row stays visually coherent.
+ *
+ * The list is duplicated once in the markup and animated by
+ * `translateX(-50%)` so the loop seam is invisible. Speed is set via
+ * the --duration CSS variable on the wrapper.
+ */
+import TechBadge from './TechBadge.astro';
+
+interface Props {
+	items?: string[];
+	/** Seconds per full loop. Lower = faster. Default 50s. */
+	duration?: number;
+	label?: string;
+}
+
+const {
+	items = [
+		'TypeScript', 'React', 'Astro', 'Next.js', 'Node.js',
+		'Python', 'Java', 'Swift', 'SwiftUI', 'SQL',
+		'Supabase', 'Postgres', 'eBay Trading API', 'QuickBooks Online',
+		'Google Sheets', 'GSAP', 'Framer Motion',
+		'Vercel', 'Git', 'GitHub Actions', 'Vite',
+	],
+	duration = 50,
+	label = 'Stack in rotation',
+} = Astro.props;
+---
+
+<section class="marquee-section" aria-label={label}>
+	<div class="marquee-head">
+		<span class="marquee-label">{label}</span>
+		<span class="marquee-hint">Hover to pause</span>
+	</div>
+
+	<div class="marquee" style={`--duration: ${duration}s`}>
+		<div class="marquee__track" aria-hidden="false">
+			<ul class="marquee__row">
+				{items.map((it) => <li><TechBadge name={it} /></li>)}
+			</ul>
+			{/* Duplicate the row once so the translateX(-50%) loop
+			    seam is invisible. The duplicate is hidden from
+			    assistive tech to avoid double announcements. */}
+			<ul class="marquee__row" aria-hidden="true">
+				{items.map((it) => <li><TechBadge name={it} /></li>)}
+			</ul>
+		</div>
+	</div>
+</section>
+
+<style>
+	.marquee-section {
+		margin: var(--space-3xl) 0;
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.marquee-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-sm);
+		margin-bottom: var(--space-md);
+		flex-wrap: wrap;
+	}
+	.marquee-label {
+		font-size: var(--fs-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-caps);
+		color: var(--color-text);
+	}
+	.marquee-hint {
+		font-size: var(--fs-xs);
+		color: var(--color-text-subtle);
+		font-style: italic;
+	}
+
+	/* The viewport — fades-out at both edges so the loop seam is
+	   visually masked. The fade is a CSS mask, not a gradient
+	   overlay, so it follows the page background regardless of
+	   theme. */
+	.marquee {
+		position: relative;
+		overflow: hidden;
+		mask-image: linear-gradient(
+			to right,
+			transparent 0,
+			black 8%,
+			black 92%,
+			transparent 100%
+		);
+		-webkit-mask-image: linear-gradient(
+			to right,
+			transparent 0,
+			black 8%,
+			black 92%,
+			transparent 100%
+		);
+	}
+
+	.marquee__track {
+		display: flex;
+		gap: 0;
+		width: max-content;
+		animation: marquee-scroll var(--duration, 50s) linear infinite;
+	}
+	.marquee:hover .marquee__track,
+	.marquee:focus-within .marquee__track {
+		animation-play-state: paused;
+	}
+
+	.marquee__row {
+		display: flex;
+		gap: var(--space-md);
+		list-style: none;
+		margin: 0;
+		padding: 0 var(--space-md);
+		flex-shrink: 0;
+		align-items: center;
+	}
+
+	.marquee__row li {
+		display: inline-flex;
+		flex-shrink: 0;
+	}
+
+	@keyframes marquee-scroll {
+		from { transform: translateX(0); }
+		to   { transform: translateX(-50%); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.marquee__track {
+			animation: none;
+			transform: translateX(0);
+		}
+		.marquee {
+			mask-image: none;
+			-webkit-mask-image: none;
+			overflow-x: auto;
+			scrollbar-width: thin;
+		}
+	}
+</style>

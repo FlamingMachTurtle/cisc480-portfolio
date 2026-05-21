@@ -3,14 +3,10 @@ sortOrder: 7
 category: interdisciplinary
 title: Honey Smitten — Operations & Internal Tooling
 description: >-
-  Software development intern and operations support for Honey Smitten (Spring
-  2024 – Present). The work spans small-business operations and applied CS:
-  building Google Sheets automation for tracking and reporting, designing a
+  Software dev intern and operations support for Honey Smitten (Spring 2024
+  – Present). Google Sheets automation for tracking and reporting, a
   QuickBooks Online inventory workflow (lot numbers, flavors, fulfillment),
-  and supporting outreach and B2B trade shows on the floor in Atlanta and
-  Las Vegas. Keywords: small-business operations, QuickBooks Online, Google
-  Sheets automation, reporting workflows, B2B trade shows, applied CS, client
-  communication.
+  and B2B trade-show floor support in Atlanta and Las Vegas.
 tech:
   - QuickBooks Online inventory workflow
   - Google Sheets automation

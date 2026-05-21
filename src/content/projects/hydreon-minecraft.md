@@ -3,13 +3,10 @@ sortOrder: 4
 category: interdisciplinary
 title: "Hydreon · Lifeboat Minecraft Projects"
 description: >-
-  Builder and QA tester for Lifeboat — a Hydreon Corporation sub-brand
-  publishing on the Minecraft Bedrock Marketplace. The work spanned executing
-  builds for DLC adventure maps (most notably the One Block Challenge map and
-  a cube-world map with rotating per-face gravity), writing the pre-release
-  QA checklists that gated when those maps shipped, and tracking bugs
-  through to fix. Keywords: game design, Minecraft, Bedrock Marketplace,
-  QA checklists, level design, adventure-map building, playtesting.
+  Builder and QA tester for Lifeboat — a Hydreon sub-brand publishing on the
+  Minecraft Bedrock Marketplace. Executed DLC adventure-map builds (the One
+  Block Challenge map and a cube-world map with per-face gravity), wrote
+  the pre-release QA checklists that gated ship, and tracked bugs to fix.
 tech:
   - Minecraft Bedrock map building
   - Pre-release QA checklists

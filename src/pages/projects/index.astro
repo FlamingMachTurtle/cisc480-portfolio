@@ -1,6 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroScene from '../../components/HeroScene.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import InfoPanel from '../../components/InfoPanel.astro';
+import InfoDisclosure from '../../components/InfoDisclosure.astro';
+import SOARTabs from '../../components/react/SOARTabs.tsx';
+import ProjectGalleryCarousel from '../../components/react/ProjectGalleryCarousel.tsx';
 import { getCollection } from 'astro:content';
 import { withBase } from '../../lib/url';
 
@@ -68,120 +73,193 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 	title="Projects"
 	description="Projects & experiences for the CISC480 Senior Capstone portfolio — capstone build, client automation, mobile apps, service learning, and small-business operations."
 >
+	<HeroScene
+		eyebrow="Eight entries · Capstone first"
+		title="Projects & Experiences"
+		subtitle="A spread of work across CS, interdisciplinary, and outside-CS experiences. SOAR-structured narratives, two failure → learning → change stories, and the CISC480 GreenStep capstone."
+		bgImage="/images/greenstep/greenstep-template-form.png"
+		bgAlt=""
+	/>
+
 	<div class="page-header">
-		<h1>Projects & Experiences</h1>
 		<p class="lead">
-			A spread of work across CS, interdisciplinary, and outside-CS experiences. Each card includes a category badge,
-			keywords, and a figure so the rubric's required elements are visible at a glance. SOAR-structured entries are
-			labeled <em>Situation</em>, <em>Obstacle</em>, <em>Action</em>, <em>Result</em>; the failure → learning → change
-			story is called out under its own heading inside the eBay entry.
+			Each entry has a category badge, keywords, and a figure for the rubric. The SOAR narrative is in tabs
+			(<em>Situation</em>, <em>Obstacle</em>, <em>Action</em>, <em>Result</em>) — click a step to read it. Failure
+			stories live behind a "What I learned" disclosure on the eBay and capstone entries.
 		</p>
 	</div>
 
-	<div class="projects-list">
-		{projects.map(({ id, data }) => {
-			const gallery = galleries[id];
-			return (
-				<div class="project-group">
-					<ProjectCard
-						title={data.title}
-						description={data.description}
-						tech={data.tech ?? []}
-						keywords={data.keywords ?? []}
-						category={data.category}
-						image={data.image}
-						imageAlt={data.imageAlt}
-						imageFirst={data.imageFirst}
-						demoUrl={data.demoUrl}
-					/>
-					{data.myContribution && (
-						<aside class="my-contribution" aria-label="My personal contribution to this group project">
-							<span class="my-contribution-label">My personal contribution</span>
-							<p>{data.myContribution}</p>
-						</aside>
-					)}
-					{data.soar && (
-						<section class="soar" aria-label="SOAR narrative">
-							<header class="soar-header">
-								<span class="soar-badge">SOAR</span>
-								<span class="soar-sub">Situation · Obstacle · Action · Result</span>
-							</header>
-							<dl class="soar-grid">
-								<div>
-									<dt>Situation</dt>
-									<dd>{data.soar.situation}</dd>
-								</div>
-								<div>
-									<dt>Obstacle</dt>
-									<dd>{data.soar.obstacle}</dd>
-								</div>
-								<div>
-									<dt>Action</dt>
-									<dd>{data.soar.action}</dd>
-								</div>
-								<div>
-									<dt>Result</dt>
-									<dd>{data.soar.result}</dd>
-								</div>
-							</dl>
-						</section>
-					)}
-					{data.failureStory && (
-						<section class="failure-story" aria-label="Failure to learning to change story">
-							<header class="failure-header">
-								<span class="failure-badge">Failure → Learning → Change</span>
-							</header>
-							<dl class="failure-grid">
-								<div>
-									<dt>What I was trying to do</dt>
-									<dd>{data.failureStory.context}</dd>
-								</div>
-								<div>
-									<dt>What didn't go well</dt>
-									<dd>{data.failureStory.whatHappened}</dd>
-								</div>
-								<div>
-									<dt>What I learned &amp; what I do differently now</dt>
-									<dd>{data.failureStory.learning}</dd>
-								</div>
-							</dl>
-						</section>
-					)}
-					{gallery && (
-						<div class="inline-gallery">
-							<div class="gallery-header">
-								<span class="gallery-title">{gallery.heading}</span>
-								<span class="gallery-caption">{gallery.caption}</span>
-							</div>
-							<div class:list={['gallery-grid', { 'gallery-grid--wide': gallery.items.length > 2 }]}>
-								{gallery.items.map((img) => (
-									<figure>
-										<img src={withBase(img.src)} alt={img.alt} loading="lazy" decoding="async" />
-										<figcaption>{img.cap}</figcaption>
-									</figure>
-								))}
-							</div>
-						</div>
-					)}
-				</div>
-			);
-		})}
+	<div class="projects-timeline" id="projects-timeline">
+		<div class="projects-timeline__rail" aria-hidden="true">
+			<div class="projects-timeline__rail-fill"></div>
+		</div>
+
+		<div class="projects-list">
+			{projects.map(({ id, data }, idx) => {
+				const gallery = galleries[id];
+				// The gallery's editorial number depends on which sibling
+				// sections render above it. Contribution=01, SOAR=02,
+				// Failure=03, Gallery=next-available.
+				let nextIndex = 1;
+				if (data.myContribution) nextIndex++;
+				if (data.soar)            nextIndex++;
+				if (data.failureStory)    nextIndex++;
+				const galleryIndex = String(nextIndex).padStart(2, '0');
+				const timelineNum = String(idx + 1).padStart(2, '0');
+				return (
+					<article class="project-group" data-timeline-index={idx + 1}>
+						<span class="project-group__node" aria-hidden="true">
+							<span class="project-group__node-num mono">{timelineNum}</span>
+						</span>
+						<ProjectCard
+							title={data.title}
+							description={data.description}
+							tech={data.tech ?? []}
+							keywords={data.keywords ?? []}
+							category={data.category}
+							image={data.image}
+							imageAlt={data.imageAlt}
+							imageFirst={data.imageFirst}
+							demoUrl={data.demoUrl}
+							transitionId={id}
+						/>
+
+						{data.myContribution && (
+							<InfoPanel tone="neutral" index="01" label="Contribution">
+								<p>{data.myContribution}</p>
+							</InfoPanel>
+						)}
+
+						{data.soar && (
+							<InfoPanel tone="accent" as="section" index="02" label="Approach (SOAR)">
+								<SOARTabs
+									client:visible
+									situation={data.soar.situation}
+									obstacle={data.soar.obstacle}
+									action={data.soar.action}
+									result={data.soar.result}
+								/>
+							</InfoPanel>
+						)}
+
+						{data.failureStory && (
+							<InfoDisclosure tone="muted" index="03" label="What I learned" hint="Failure → learning → change">
+								<dl class="kv-stack">
+									<div data-step="01">
+										<dt>What I was trying to do</dt>
+										<dd>{data.failureStory.context}</dd>
+									</div>
+									<div data-step="02">
+										<dt>What didn't go well</dt>
+										<dd>{data.failureStory.whatHappened}</dd>
+									</div>
+									<div data-step="03">
+										<dt>What I learned &amp; what I do differently now</dt>
+										<dd>{data.failureStory.learning}</dd>
+									</div>
+								</dl>
+							</InfoDisclosure>
+						)}
+
+						{gallery && (
+							gallery.items.length > 2 ? (
+								<ProjectGalleryCarousel
+									client:visible
+									indexLabel={galleryIndex}
+									heading={gallery.heading}
+									caption={gallery.caption}
+									items={gallery.items.map((img) => ({
+										src: withBase(img.src),
+										alt: img.alt,
+										cap: img.cap,
+									}))}
+								/>
+							) : (
+								<section class="inline-gallery">
+									<header class="gallery-header">
+										<span class="gallery-index mono">{galleryIndex}</span>
+										<span class="gallery-sep" aria-hidden="true">/</span>
+										<span class="gallery-title">{gallery.heading}</span>
+										<span class="gallery-caption">{gallery.caption}</span>
+									</header>
+									<div class="gallery-grid">
+										{gallery.items.map((img) => (
+											<figure>
+												<img src={withBase(img.src)} alt={img.alt} loading="lazy" decoding="async" />
+												<figcaption>{img.cap}</figcaption>
+											</figure>
+										))}
+									</div>
+								</section>
+							)
+						)}
+					</article>
+				);
+			})}
+		</div>
 	</div>
 </BaseLayout>
 
 <style>
 	.page-header {
-		margin-bottom: 2rem;
-	}
-	.page-header h1 {
-		margin-bottom: 0.5rem;
+		margin-bottom: var(--space-xl);
 	}
 	.lead {
-		font-size: 1.0rem;
-		color: #475569;
-		line-height: 1.55;
+		font-size: var(--fs-base);
+		color: var(--color-text-muted);
+		line-height: var(--lh-snug);
 		margin: 0;
 		max-width: 56rem;
+	}
+
+	/* ===== Timeline rail =====
+	   Vertical hairline rule on the left of the projects list with
+	   per-project numbered nodes. The amber fill on top of the rail
+	   tracks scroll progress through the list (set as inline height
+	   by the small scroll handler below). Each project group dims
+	   when it's far from viewport center and brightens when in
+	   focus, with the node circle filling amber at the active step.
+
+	   Why this is here and not in a shared component: the rail is
+	   purely a layout decoration around the existing project list,
+	   so the cleanest hand-off is a wrapper + sibling positioned
+	   absolutely. No React island needed; pure CSS + ~40 lines of
+	   vanilla JS for the scroll bookkeeping.
+
+	   Geometry: the three numbers below (gutter, rail-x, node-size)
+	   are the source of truth for the layout. Everything else is
+	   derived from them via calc(), so a future rail reposition is
+	   a one-line change. The node's `left` is computed so the
+	   *center* of the node circle lands exactly on the rail line —
+	   previously the node's left *edge* was at the rail x, which
+	   made the line look like it poked out of the side of each
+	   ring. With centering, the node's background (white for
+	   active, amber for past) cleanly hides the line behind it, so
+	   the line visually terminates at each circle. */
+	.projects-timeline {
+		--timeline-gutter: 4.5rem;     /* .projects-timeline padding-left */
+		--timeline-rail-x: 1.5rem;     /* rail absolute x within timeline */
+		--timeline-node-size: 0.875rem;
+		position: relative;
+		padding-left: var(--timeline-gutter);
+	}
+	.projects-timeline__rail {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: var(--timeline-rail-x);
+		width: 1px;
+		background: var(--color-border);
+	}
+	.projects-timeline__rail-fill {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 1px;
+		height: var(--rail-fill, 0%);
+		background: var(--color-accent);
+		transition: height 0.08s linear;
+		will-change: height;
 	}
 
 	.projects-list {
@@ -191,171 +269,131 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 	}
 
 	.project-group {
-		margin-bottom: 2.5rem;
+		position: relative;
+		margin-bottom: var(--space-3xl);
+		opacity: 0.4;
+		transition: opacity 0.5s ease;
 	}
-	.project-group:last-child {
-		margin-bottom: 0;
+	.project-group--past   { opacity: 1; }
+	.project-group--active { opacity: 1; }
+	.project-group:last-child { margin-bottom: 0; }
+
+	/* Node circle on the rail. Hollow ring by default; fills amber
+	   once the project has been reached / passed.
+
+	   The `left` calc places the node's *center* on the rail:
+	     project-group's x=0 maps to .projects-timeline's x=gutter,
+	     so the node center needs to sit at (rail-x - gutter) within
+	     the group, and the node's left edge sits half a node-width
+	     further left. */
+	.project-group__node {
+		position: absolute;
+		top: 1.75rem;
+		left: calc(
+			var(--timeline-rail-x) - var(--timeline-gutter)
+			- var(--timeline-node-size) / 2
+		);
+		width: var(--timeline-node-size);
+		height: var(--timeline-node-size);
+		border-radius: 50%;
+		background: var(--color-bg);
+		border: 2px solid var(--color-border-strong);
+		z-index: 2;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		transition: border-color 0.35s ease, background-color 0.35s ease,
+			transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.project-group__node-num {
+		position: absolute;
+		left: calc(100% + var(--space-sm));
+		font-size: var(--fs-2xs);
+		color: var(--color-text-subtle);
+		font-feature-settings: "tnum" on, "ss03" on;
+		letter-spacing: 0.04em;
+		font-weight: 600;
+		white-space: nowrap;
+		transition: color 0.35s ease;
+	}
+	.project-group--past   .project-group__node {
+		border-color: var(--color-accent);
+		background: var(--color-accent);
+	}
+	.project-group--active .project-group__node {
+		border-color: var(--color-accent);
+		background: var(--color-bg);
+		transform: scale(1.4);
+	}
+	.project-group--active .project-group__node-num {
+		color: var(--color-accent);
 	}
 
-	.my-contribution {
-		margin-top: 0.75rem;
-		padding: 0.85rem 1.1rem;
-		background: #fef9c3;
-		border: 1px solid #fde68a;
-		border-radius: 0.4rem;
-	}
-	.my-contribution-label {
-		display: block;
-		font-size: 0.7rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: #92400e;
-		margin-bottom: 0.25rem;
-	}
-	.my-contribution p {
-		margin: 0;
-		font-size: 0.9rem;
-		line-height: 1.5;
-		color: #334155;
+	@media (max-width: 700px) {
+		.projects-timeline {
+			--timeline-gutter: 2.5rem;
+			--timeline-rail-x: 0.75rem;
+		}
+		.project-group__node-num { display: none; }
 	}
 
-	/* SOAR block */
-	.soar {
-		margin-top: 0.75rem;
-		padding: 1rem 1.15rem;
-		background: #eff6ff;
-		border: 1px solid #bfdbfe;
-		border-radius: 0.4rem;
-	}
-	.soar-header {
-		display: flex;
-		align-items: baseline;
-		gap: 0.6rem;
-		margin-bottom: 0.6rem;
-		flex-wrap: wrap;
-	}
-	.soar-badge {
-		font-size: 0.68rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.09em;
-		color: #1d4ed8;
-		padding: 0.15rem 0.5rem;
-		background: #fff;
-		border: 1px solid #bfdbfe;
-		border-radius: 999px;
-	}
-	.soar-sub {
-		font-size: 0.78rem;
-		color: #1e40af;
-	}
-	.soar-grid {
-		margin: 0;
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0.5rem 1rem;
-	}
-	@media (max-width: 640px) {
-		.soar-grid { grid-template-columns: 1fr; }
-	}
-	.soar-grid > div {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-	}
-	.soar-grid dt {
-		font-size: 0.72rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.07em;
-		color: #1e3a8a;
-	}
-	.soar-grid dd {
-		margin: 0;
-		font-size: 0.88rem;
-		line-height: 1.5;
-		color: #1e293b;
+	/* Reduced motion: disable opacity transitions and node scale. */
+	@media (prefers-reduced-motion: reduce) {
+		.project-group { opacity: 1; transition: none; }
+		.project-group__node { transition: none; transform: none; }
+		.projects-timeline__rail-fill { transition: none; }
 	}
 
-	/* Failure → Learning → Change block */
-	.failure-story {
-		margin-top: 0.75rem;
-		padding: 1rem 1.15rem;
-		background: #fff1f2;
-		border: 1px solid #fecdd3;
-		border-radius: 0.4rem;
-	}
-	.failure-header {
-		margin-bottom: 0.6rem;
-	}
-	.failure-badge {
-		font-size: 0.68rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.09em;
-		color: #be123c;
-		padding: 0.15rem 0.5rem;
-		background: #fff;
-		border: 1px solid #fecdd3;
-		border-radius: 999px;
-	}
-	.failure-grid {
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.55rem;
-	}
-	.failure-grid > div {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-	}
-	.failure-grid dt {
-		font-size: 0.72rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.07em;
-		color: #9f1239;
-	}
-	.failure-grid dd {
-		margin: 0;
-		font-size: 0.88rem;
-		line-height: 1.5;
-		color: #1e293b;
-	}
-
-	/* Inline gallery sits directly under its card */
+	/* Inline gallery — same editorial hairline-rule + numbered-kicker
+	   pattern as <InfoPanel>, applied here directly so the gallery
+	   reads as another numbered section in the project article rather
+	   than a tinted card. */
 	.inline-gallery {
-		margin-top: 0.75rem;
-		padding: 1rem 1.25rem;
-		background: #f8fafc;
-		border: 1px solid #e2e8f0;
-		border-top: none;
-		border-radius: 0 0 0.5rem 0.5rem;
+		margin-top: var(--space-xl);
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--color-border);
 	}
 
 	.gallery-header {
 		display: flex;
 		align-items: baseline;
-		gap: 0.75rem;
-		margin-bottom: 0.75rem;
+		gap: var(--space-xs);
+		margin-bottom: var(--space-md);
 		flex-wrap: wrap;
 	}
-	.gallery-title {
-		font-size: 0.85rem;
+	.gallery-index {
+		font-size: var(--fs-2xs);
 		font-weight: 600;
-		color: #334155;
+		font-feature-settings: "tnum" on, "ss03" on;
+		color: var(--color-text-subtle);
+		letter-spacing: 0.04em;
+	}
+	.gallery-sep {
+		font-size: var(--fs-2xs);
+		color: var(--color-text-subtle);
+		opacity: 0.6;
+	}
+	.gallery-title {
+		font-size: var(--fs-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-caps);
+		color: var(--color-text);
 	}
 	.gallery-caption {
-		font-size: 0.8rem;
-		color: #64748b;
+		font-size: var(--fs-xs);
+		color: var(--color-text-muted);
+		font-style: italic;
+		margin-left: auto;
+	}
+	@media (max-width: 640px) {
+		.gallery-caption { margin-left: 0; flex-basis: 100%; }
 	}
 
 	.gallery-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-		gap: 0.75rem;
+		gap: var(--space-md);
 	}
 	.gallery-grid--wide {
 		grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
@@ -363,21 +401,112 @@ const galleries: Record<string, { heading: string; caption: string; items: { src
 
 	.inline-gallery figure {
 		margin: 0;
-		background: #fff;
-		border: 1px solid #e2e8f0;
-		border-radius: 0.375rem;
-		overflow: hidden;
-		text-align: center;
 	}
 	.inline-gallery img {
 		width: 100%;
-		height: 9rem;
+		height: 10rem;
 		object-fit: cover;
 		display: block;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--color-border);
 	}
 	.inline-gallery figcaption {
-		padding: 0.35rem 0.5rem;
-		font-size: 0.78rem;
-		color: #64748b;
+		margin-top: var(--space-2xs);
+		font-size: var(--fs-xs);
+		color: var(--color-text-muted);
 	}
 </style>
+
+<script>
+	/**
+	 * Timeline scroll bookkeeping (vanilla JS, no framework cost).
+	 *
+	 * Two jobs:
+	 *   1. Drive the amber rail fill height as the user scrolls
+	 *      through the projects list. Mapped from a window-relative
+	 *      progress value (0 → 1) to `--rail-fill`.
+	 *   2. Toggle `.project-group--active` and `.project-group--past`
+	 *      classes on each project so the node circle and opacity
+	 *      can react via pure CSS. "Active" = group is centered in
+	 *      the viewport; "past" = its top has crossed the viewport
+	 *      midline (used so projects you've already scrolled past
+	 *      stay at full opacity instead of dimming again).
+	 *
+	 * The handler uses requestAnimationFrame to coalesce scroll +
+	 * resize events into a single frame so the work stays cheap on
+	 * long pages, and re-binds on Astro's `astro:page-load` so it
+	 * survives client-side route swaps via <ClientRouter />.
+	 *
+	 * Respects `prefers-reduced-motion`: when set, we still maintain
+	 * the past/active classes (so the node fills are accurate) but
+	 * skip the rail-fill height update so the small horizontal line
+	 * doesn't crawl up under the user's eye.
+	 */
+	function bindProjectsTimeline() {
+		const tl = document.getElementById('projects-timeline');
+		if (!tl) return;
+		const list = tl.querySelector('.projects-list') as HTMLElement | null;
+		const groups = Array.from(tl.querySelectorAll<HTMLElement>('.project-group'));
+		if (!list || groups.length === 0) return;
+
+		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		let rafId = 0;
+
+		const update = () => {
+			rafId = 0;
+			const vh = window.innerHeight;
+			const center = vh * 0.5;
+			const listRect = list.getBoundingClientRect();
+
+			// Rail fill: how far has the viewport center traveled
+			// through the list's vertical extent? Clamped 0..1.
+			if (!reducedMotion) {
+				const total = Math.max(1, listRect.height - vh * 0.5);
+				const scrolled = Math.max(0, center - listRect.top);
+				const progress = Math.max(0, Math.min(1, scrolled / total));
+				tl.style.setProperty('--rail-fill', (progress * 100).toFixed(2) + '%');
+			} else {
+				tl.style.setProperty('--rail-fill', '100%');
+			}
+
+			// Per-group active/past classes.
+			let activeIdx = -1;
+			let activeDist = Infinity;
+			groups.forEach((g) => {
+				const r = g.getBoundingClientRect();
+				const groupCenter = r.top + r.height * 0.35;
+				const dist = Math.abs(groupCenter - center);
+				if (dist < activeDist) {
+					activeDist = dist;
+					activeIdx = groups.indexOf(g);
+				}
+			});
+
+			groups.forEach((g, i) => {
+				const r = g.getBoundingClientRect();
+				const passed = r.top < center;
+				g.classList.toggle('project-group--past', passed);
+				g.classList.toggle('project-group--active', i === activeIdx && r.top < vh && r.bottom > 0);
+			});
+		};
+
+		const schedule = () => {
+			if (rafId) return;
+			rafId = requestAnimationFrame(update);
+		};
+
+		update();
+		window.addEventListener('scroll', schedule, { passive: true });
+		window.addEventListener('resize', schedule);
+
+		// Tear-down on Astro client-side navigation away.
+		document.addEventListener('astro:before-swap', () => {
+			window.removeEventListener('scroll', schedule);
+			window.removeEventListener('resize', schedule);
+			if (rafId) cancelAnimationFrame(rafId);
+		}, { once: true });
+	}
+
+	bindProjectsTimeline();
+	document.addEventListener('astro:page-load', bindProjectsTimeline);
+</script>

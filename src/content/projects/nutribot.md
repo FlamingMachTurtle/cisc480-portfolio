@@ -3,13 +3,10 @@ sortOrder: 2
 category: cs
 title: NutriBot — Personalized Nutrition & Meal Planning Platform
 description: >-
-  NutriBot generates personalized weekly meal plans that respect dietary needs,
-  allergies, and preferences, and then rolls the week's recipes up into a single
-  consolidated shopping list. I designed the scheduling UI, the allergy-aware
-  recipe filtering workflow, and the ingredient aggregation logic so a user can
-  plan an entire week in minutes. Keywords: personalization, dietary planning,
-  allergy-aware filtering, responsive UI, scheduling, ingredient aggregation,
-  human-centered design.
+  Personalized weekly meal plans that respect dietary needs, allergies, and
+  preferences, rolled up into a single consolidated shopping list. I
+  designed the scheduling UI, the allergy-aware filtering, and the
+  ingredient aggregation so a user can plan a full week in minutes.
 tech:
   - Personalization algorithms
   - Allergy-aware recipe filtering

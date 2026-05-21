@@ -12,13 +12,16 @@
 ## 0. TL;DR — current state
 
 - **Live site is up and verified.** <https://flamingmachturtle.github.io/cisc480-portfolio/>
-  (bootstrap completed 2026-05-20 ~21:37 CT — see §6 status log). All four routes
-  and sampled assets return HTTP 200. Canonical / OG / asset paths in the deployed
-  HTML all resolve under the `/cisc480-portfolio/` subpath as designed.
+  Bootstrap deploy completed 2026-05-20 ~21:37 CT (submission baseline);
+  `redesign/scene-transitions` then merged onto `main` and re-deployed
+  ~21:46 CT (see §6 status log).
 - **Repo of record:** <https://github.com/FlamingMachTurtle/cisc480-portfolio>
-  (public, jimenezpf has read access by default). `main` is at tag
-  `submission-2026-05-20` (commit `b748233`). Do not move this tag.
+  (public, jimenezpf has read access by default). `main` HEAD is the
+  merge commit that brought the V6 redesign onto the served branch.
+  The submission tag `submission-2026-05-20` still points at `b748233`
+  and is the rubric-of-record / rollback target. Do not move this tag.
 - **Site builds clean** (`npm run build` → 4 pages, 0 errors).
+  Pre-merge build-test on the redesign branch passed May 20 ~20:45.
 - **All 11 rubric adjustments** from the original handoff are **done**.
 - **Project entries:** 8 total, exceeding the rubric floor (≥ 5), with the right
   composition: 4 CS, 2 interdisciplinary, 1 outside-CS, 1 capstone. SOAR ×3
@@ -34,6 +37,10 @@
 - **Git remotes.** `cisc480` = the submission repo (push target). `origin` =
   the legacy `FlamingMachTurtle.github.io` user-page repo, retained but no longer
   the submission target.
+- **Redesign now lives on `main`** (merged at owner direction after the
+  initial bootstrap deploy). The branch `redesign/scene-transitions` is
+  preserved at its tip; `main` is the served version. See §7 for what
+  the redesign brought in and the rollback procedure.
 
 ---
 
@@ -41,7 +48,7 @@
 
 | ID | Item | Status | Notes |
 |----|------|--------|-------|
-| A1 | Rewrite About Me with ACM "unique combination" pattern | ✅ Done | `src/pages/index.astro` — explicit "Why should you hire me?" lead, paired CS-vs-liberal-arts cards |
+| A1 | Rewrite About Me with ACM "unique combination" pattern | ✅ Done | `src/pages/index.astro` — `.about-claim` editorial lead at top of About explicitly answers "Why should we hire you?" via CS skills (Python automation, React + Supabase, SwiftUI, image pipelines) **plus** liberal-arts strengths (small-business operations, AVID inquiry-based tutoring, Math minor, three human languages). **V6.2 restore (May 20):** the V6.1 tone-down had flattened the section to factual bullets and lost the explicit framing; restored as a single editorial paragraph (no paired-card "AI bolt-on" grid). |
 | A2 | Add Skills section (technical + professional) | ✅ Done | Same page, 4 grouped pill-tag panels |
 | A3 | Add `keywords` + `category` to project schema; render visible | ✅ Done | `src/content.config.ts` + `src/components/ProjectCard.astro`. Badge + dashed keyword tags |
 | A4 | Add outside-CS entry (AVID Tutoring) | ✅ Done | `src/content/projects/avid-tutoring.md` + stylized SVG (no minors) at `public/images/avid/` |
@@ -184,6 +191,84 @@ Before submitting in Canvas:
 | 2026-05-18 | Owner | Selected reflection theme (automation/ethics), failure story (eBay rate-limit), interdisciplinary second (Honey Smitten), repo strategy (`cisc480-portfolio` project page), section 02 |
 | 2026-05-18 | Owner | Provided full capstone YAML brief + 5 screenshots (only 01/04/05 used; 02/03 omitted due to real emails) |
 | 2026-05-18 | Build agent (with owner-provided detail) | A8 closed: Hydreon `myContribution` rewritten to QA-checklist authoring + adventure-map builds (One Block Challenge islands + cube-world rotating-gravity map); description updated to clarify Lifeboat as a Hydreon Corporation sub-brand |
+| 2026-05-18 | Build agent | Submission baseline committed in two atomic commits on `main`: build-config + content-baseline. Tag `submission-2026-05-20` set on the result. Redesign branch `redesign/scene-transitions` cut from the tag (does NOT block submission). |
+| 2026-05-18 | Build agent | Headless puppeteer audit of all four pages → `redesign/audit/visual-baseline.md`. Top finding: GreenStep capstone entry stacks 6 different visual treatments — confirms the user's "AI bolt-on red card" feedback. |
+| 2026-05-18 | Build agent | `redesign/design-spec.md` + `redesign/animation-options.md` written. Decision: editorial paper + cinematic dark hero band, single warm amber accent, one `<InfoPanel>` primitive replacing four ad-hoc panels, Astro 6 View Transitions + GSAP for animation (no React added). |
+| 2026-05-18 | Build agent | Phase 4 implemented in 7 commits on `redesign/scene-transitions`: tokens → layout/card → InfoPanel → projects sweep → HeroScene + page sweep → GSAP/view-transitions → docs. Build clean (4 pages, 0 errors) at every commit. Pink banner deleted. |
+| 2026-05-20 | Build agent (owner-reported) | **V6.2 hero/header fix.** Owner reported: at scroll top of any hero page (home / projects / fun), the four nav links (Home / Projects / Resume / Fun Stuff) were nearly invisible. Root cause: the sticky `.site-header` is intentionally transparent over the hero band (white text inherited from `--color-text-inverse`), but `.main` had `padding-top: var(--space-xl)` *above* the hero, so at scrollY=0 the transparent header sat over the white main-padding band, not over the dark hero. Fixed in `src/styles/global.css` + `src/components/HeroScene.astro` by exposing `--main-padding-top` and a new `--header-overlap` (3.25rem) as CSS variables on `.main`, then having `.hero-scene` apply `margin-top: calc(-1 * (var(--main-padding-top) + var(--header-overlap)))` and add the same amount back as `padding-top`. Net effect: the dark hero band extends up *under* the transparent header (so white nav text is readable), and the title text still clears the header. No JS change. Resume page (`staticHeader`) is unaffected because the header is opaque from the start there. |
+| 2026-05-20 | Build agent (owner-reported) | **V6.2 About-section restore (A1).** Owner asked to double-check the site against the May 20 PDF rubric. Found one regression: the V6.1 tone-down had stripped the "Why should we hire you?" framing from the About section (HANDOFF claimed A1 done, code had drifted). Restored as a single `.about-claim` editorial paragraph at the top of the About section in `src/pages/index.astro` — explicit ACM unique-combination pattern (CS skills *plus* liberal-arts strengths) — without bringing back the paired-card grid V6.1 had deliberately removed. Bullets and About summary unchanged. Build passes (4 pages, 0 errors). |
+| 2026-05-20 | Build agent (owner-reported) | **V6.2.2 timeline rail alignment.** Owner reported the projects-page timeline rail "overlapped" the per-project node circles in a way that didn't look natural. Root cause: the rail sat at `left: 1.5rem` (1px wide) and the nodes were positioned at `left: -3rem` (relative to the project group, whose left edge is at the 4.5rem `.projects-timeline` padding), so the node's *left edge* — not its center — landed on the rail x. The line visually tangented the side of every ring instead of running through the middle, which read as "line poking out of the circles". Fixed in `src/pages/projects/index.astro` by hoisting the three layout numbers (`--timeline-gutter`, `--timeline-rail-x`, `--timeline-node-size`) to CSS variables on `.projects-timeline`, then computing the node's `left` as `calc(var(--timeline-rail-x) - var(--timeline-gutter) - var(--timeline-node-size) / 2)` so the node *center* lands on the rail. With centering, the node's background (white for active, amber for past) cleanly hides the line behind it — so the line now visually terminates at each circle instead of cutting across the edge. Mobile @media simplified to just override the two source-of-truth vars (gutter + rail-x); the node-position calc rederives correctly. Also nudged the editorial number label (`.project-group__node-num`) gap from `var(--space-xs)` (0.5rem) to `var(--space-sm)` (0.75rem) so the "03" sits a hair further from the circle. Build clean (4 pages, 0 errors). |
+| 2026-05-20 | Build agent (owner-reported) | **V6.2.1 white-sliver fix.** Owner reported a ~2px white border still visible between the viewport top and the dark hero band on hero pages, flickering "when you move around a bit". Root cause: the static `--header-overlap: 3.25rem` CSS token was 0.11rem (~1.8px) shorter than the measured desktop header height (0.75rem×2 nav padding + 1.125rem×1.6 nav-home line-height + 1px border-bottom ≈ 3.36rem), and even more underspec'd on mobile where `.nav { flex-wrap: wrap }` doubles header height when links wrap to a second line. Font swap (Geist Variable loads via `@fontsource` after first paint) was changing line metrics ~1–2px and causing the flicker. **Layered fix:** (a) bumped the CSS fallback `--header-overlap` on `.main` from 3.25rem → 4.25rem so the band is gap-free even before JS runs; (b) updated the mobile `@media (max-width: 640px)` override in `HeroScene.astro` to keep the overlap calc in the padding (the previous override blew it away with a shorthand `padding:` declaration); (c) added a JS measurement in the existing inline script in `BaseLayout.astro` that writes the actual measured header height + 2px buffer to `--header-overlap` on `.main` after page-load, font swap, viewport resize, and orientation change. Static-header pages (resume) skip the scroll toggle but still get the measurement so the layout token stays accurate. |
 | 2026-05-20 | Audit agent (owner-prompted) | Repo + site audit against the May 20 PDF. Found that the `cisc480-portfolio` repo had never been created and the live URL was 404; the legacy user-page repo was serving the submission HTML but with all asset/nav links pointing to a non-existent `/cisc480-portfolio/` subpath. Content was rubric-complete; only the deployment plumbing was missing. |
 | 2026-05-20 | Bootstrap agent | Executed the §2 item #1 plan ("1A"). Preserved post-baseline redesign WIP as commit `8b09319` on `redesign/scene-transitions` (pushed to legacy origin). Switched to `main` (`b748233`, clean tree). Created public repo `FlamingMachTurtle/cisc480-portfolio` via `gh repo create`. Added second git remote `cisc480` (kept `origin` pointing at the legacy user-page repo). Pushed `main` and tag `submission-2026-05-20`. Enabled Pages via `gh api PUT /repos/.../pages -f build_type=workflow`. Watched the auto-triggered deploy workflow to green (build 16s, deploy 10s). Verified all 4 routes + sampled assets return 200 against <https://flamingmachturtle.github.io/cisc480-portfolio/>. |
+| 2026-05-20 | Bootstrap agent (owner-prompted) | Owner observed the deployed site was the unanimated submission baseline, not the redesign they'd been previewing locally. Confirmed branch swap intent ("1A" had implicitly inherited HANDOFF §7's "ship `main`" default; owner wanted the V6.x redesign). Build-tested `redesign/scene-transitions` locally (4 pages, 0 errors, 1.6s). Merged `redesign/scene-transitions` into `main` with `--no-ff` (resolved a HANDOFF.md conflict by keeping the union of both branches' status logs). Submission tag `submission-2026-05-20` left at `b748233` so the rubric-of-record / rollback target is unchanged. Pushed merged `main` to `cisc480`; deploy workflow re-triggered and went green. Verified the same 8 routes/assets + redesign-specific artifacts (hero bg, marquee, view-transitions polyfill chunk) return 200 on the live host. |
 | | | |
+
+---
+
+## 7. Redesign — now lives on `main`
+
+> **Status (as of 2026-05-20 ~21:46 CT):** the branch `redesign/scene-transitions`
+> has been merged into `main` and is the served version at
+> <https://flamingmachturtle.github.io/cisc480-portfolio/>. The submission tag
+> `submission-2026-05-20` (commit `b748233`) is unchanged and remains the
+> rubric-of-record / rollback target.
+
+The redesign brings in:
+
+- **HeroScene** — cinematic dark hero band on home / projects / fun (resume
+  keeps its paper-on-stage aesthetic). Replaces the original pink
+  "CISC480 banner" on home.
+- **InfoPanel** — one panel primitive replaces four ad-hoc treatments
+  (`.soar`, `.failure-story`, `.my-contribution`, `.capstone-banner`)
+  with three tones differentiated only by a 3px left rule + label color.
+- **InfoDisclosure** — failure stories behind a "What I learned" disclosure.
+- **SOARTabs** (React island) — SOAR narrative as tabs instead of stacked
+  blocks.
+- **StatStrip** — by-the-numbers count-up on the home page.
+- **TechMarquee + TechBadge** — brand-color tech stack lockup.
+- **ProjectGalleryCarousel** — embla-based swipeable per-project gallery.
+- **ScrollReveal** islands on home + projects.
+- **Astro 6 ClientRouter view transitions + GSAP scene layer** for
+  page-to-page morphs and hero-bg parallax.
+- **Editorial typography** (Geist + Geist Mono) with editorial features.
+- **About** rewritten as a single editorial `.about-claim` paragraph
+  (V6.2 restore) instead of paired CS-vs-LA bordered cards.
+- **Projects** rendered as a numbered timeline with a vertical rail
+  (V6.2.2 alignment).
+- One outlined badge replaces four pastel-fill category badges. Single
+  warm amber accent (`#b45309`) and a slate spine consumed via `:root`
+  tokens; no hex codes in component styles.
+
+Bundle adds (~140 KB gz combined): `@astrojs/react` + `framer-motion`
++ `gsap` + `embla-carousel-react` + view-transitions polyfill.
+Acceptable for GH Pages.
+
+Supporting documents (also on `main` after the merge):
+
+- `redesign/audit/visual-baseline.md` — programmatic audit of the
+  submission baseline.
+- `redesign/audit/about-and-stats-v6.md` — V6.x About-section + stat
+  strip rationale.
+- `redesign/audit/density-pass-v4.md` — V4 density/spacing notes.
+- `redesign/audit/timeline-and-logos-v5.md` — V5 timeline rail / logo
+  reasoning.
+- `redesign/design-spec.md` — binding spec the implementation followed.
+- `redesign/animation-options.md` — evaluates (A) View Transitions
+  + GSAP vs (B) +React island vs (C) full R3F + Theatre.js. Recommended
+  + shipped (A). (B) and (C) deferred.
+
+### Rollback procedure
+
+If a regression surfaces on the live host that we can't fix quickly,
+rollback to the submission baseline is one command + a force-push:
+
+```
+git checkout main
+git reset --hard submission-2026-05-20   # or d69f6a7 to keep the bootstrap doc commit
+git push --force-with-lease cisc480 main
+```
+
+That puts the served site back to the rubric-complete baseline. The
+redesign work remains intact on `redesign/scene-transitions` for later
+reattempt.

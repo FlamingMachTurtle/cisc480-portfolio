@@ -1,0 +1,49 @@
+---
+/**
+ * TechIcon — inline SVG glyph for a single tech name.
+ *
+ * Renders the simple-icons brand path as a 1em x 1em SVG that takes
+ * `currentColor` by default. The brand hex is exposed as a CSS custom
+ * property `--brand` on the `<svg>` so the parent component can swap
+ * to brand color on hover / active state without re-rendering.
+ *
+ * If the name is not in the registry, returns nothing — callers
+ * should detect this with `resolveTechIcon()` first and fall back
+ * to a text-only badge.
+ */
+import { resolveTechIcon } from '../lib/tech-icons';
+
+interface Props {
+	name: string;
+	size?: number | string;
+	/** Set to true to start in the brand-colored state; defaults to inheriting `currentColor`. */
+	colored?: boolean;
+	class?: string;
+}
+
+const { name, size = '1em', colored = false, class: className } = Astro.props;
+const icon = resolveTechIcon(name);
+---
+
+{icon && (
+	<svg
+		class:list={['tech-icon', className]}
+		role="img"
+		aria-label={icon.title}
+		viewBox="0 0 24 24"
+		width={size}
+		height={size}
+		style={`--brand: #${icon.hex}; ${colored ? 'color: var(--brand);' : ''}`}
+	>
+		<title>{icon.title}</title>
+		<path d={icon.path} fill="currentColor" />
+	</svg>
+)}
+
+<style>
+	.tech-icon {
+		flex-shrink: 0;
+		display: inline-block;
+		vertical-align: -0.125em;
+	}
+</style>

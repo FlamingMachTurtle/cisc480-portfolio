@@ -50,7 +50,7 @@ What's next is concrete. I plan to grow **Big Chuck Data LLC** into a sustainabl
 
 ## Closing
 
-I leave St. Thomas as a developer who can talk to non-technical people without losing them, ship reliable automation that respects real-world constraints, and treat the people I build for — store owners, middle-school students, municipal staff, future patients — with the kind of care this tradition expects.
+I leave St. Thomas as a developer who can talk to non-technical people without losing them, ship reliable automation that respects real-world constraints, and treat the people I build for — store owners, middle-school students, municipal staff, and the small-team operators who don't usually get custom software at all — with the kind of care this tradition expects.
 
 ---
 
