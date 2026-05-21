@@ -11,13 +11,19 @@
 
 ## 0. TL;DR — current state
 
+- **Live site is up and verified.** <https://flamingmachturtle.github.io/cisc480-portfolio/>
+  (bootstrap completed 2026-05-20 ~21:37 CT — see §6 status log). All four routes
+  and sampled assets return HTTP 200. Canonical / OG / asset paths in the deployed
+  HTML all resolve under the `/cisc480-portfolio/` subpath as designed.
+- **Repo of record:** <https://github.com/FlamingMachTurtle/cisc480-portfolio>
+  (public, jimenezpf has read access by default). `main` is at tag
+  `submission-2026-05-20` (commit `b748233`). Do not move this tag.
 - **Site builds clean** (`npm run build` → 4 pages, 0 errors).
-- **All 11 rubric adjustments** from the original handoff are **done** except for one
-  small owner-input item flagged below (A8).
+- **All 11 rubric adjustments** from the original handoff are **done**.
 - **Project entries:** 8 total, exceeding the rubric floor (≥ 5), with the right
   composition: 4 CS, 2 interdisciplinary, 1 outside-CS, 1 capstone. SOAR ×3
   (capstone + eBay + NutriBot), failure-story ×2 (eBay rate-limit + capstone v0.7.2),
-  myContribution callout on Hydreon (placeholder text pending) and on the capstone.
+  myContribution callout on Hydreon and on the capstone.
 - **Reflection essay:** 1194 words (in the 1000–1200 range), theme = practical /
   ethical automation for small businesses and underserved users, disciplines named
   = CS + Business + Ethics + Education, ≥ 3 portfolio examples, ≥ 1 failure story,
@@ -25,6 +31,9 @@
 - **Deploy config:** Astro `site: https://flamingmachturtle.github.io`, `base:
   '/cisc480-portfolio/'`. All absolute asset paths run through `withBase()` so the
   site works correctly under the project-page subpath.
+- **Git remotes.** `cisc480` = the submission repo (push target). `origin` =
+  the legacy `FlamingMachTurtle.github.io` user-page repo, retained but no longer
+  the submission target.
 
 ---
 
@@ -48,22 +57,17 @@
 
 ## 2. Outstanding owner-input items
 
-The only remaining thing blocking a clean submission:
-
-1. **New GitHub repo provisioning.**
-   - Repo name: `cisc480-portfolio` (under `FlamingMachTurtle`).
-   - Astro is already configured for this URL — no code change needed once the
-     repo exists.
-   - Steps:
-     1. Create empty repo at <https://github.com/new> (name: `cisc480-portfolio`,
-        public, no README, no .gitignore — those exist locally already).
-     2. From this workspace: `git remote add origin
-        https://github.com/FlamingMachTurtle/cisc480-portfolio.git`
-     3. `git add -A && git commit -m "Initial CISC480 portfolio submission"`
-     4. `git push -u origin main`
-     5. Repo Settings → Pages → Source = **GitHub Actions**.
-     6. Confirm `jimenezpf` has read access (public repo = automatic).
-   - Live URL after first deploy: <https://flamingmachturtle.github.io/cisc480-portfolio/>
+1. **New GitHub repo provisioning.** ✅ **Done 2026-05-20 ~21:37 CT.**
+   - Repo created at <https://github.com/FlamingMachTurtle/cisc480-portfolio>
+     (public, GH Pages source = "GitHub Actions").
+   - Remote `cisc480` added (`origin` retained for the legacy user-page repo,
+     no longer the submission target).
+   - `main` and tag `submission-2026-05-20` pushed.
+   - Deploy workflow ran on first push: build 16s, deploy 10s, both green.
+   - Live URL verified: <https://flamingmachturtle.github.io/cisc480-portfolio/>
+     (`/`, `/projects/`, `/resume/`, `/fun/`, `resume.pdf`, headshot, favicon,
+     and a capstone screenshot all return 200; canonical/OG URLs and internal
+     asset paths all resolve correctly under the subpath).
 
 2. **Capstone follow-ups (low priority — not blocking).**
    - `06-reports.png` (the Reports screen with CSV export) wasn't in the
@@ -148,7 +152,9 @@ Before submitting in Canvas:
 - [x] Reflection includes ≥ 1 failure → learning → change story
 - [x] Academic honesty statement in `README.md`
 - [x] Name + class + section in `README.md` header
-- [ ] **Deploy** — Push to new GitHub repo, verify GitHub Pages URL is live
+- [x] **Deploy** — Pushed to <https://github.com/FlamingMachTurtle/cisc480-portfolio>;
+      live at <https://flamingmachturtle.github.io/cisc480-portfolio/>; all 4 routes
+      and sampled assets return HTTP 200 (verified 2026-05-20 ~21:38 CT).
 - [ ] **Canvas submission** — Paste (a) academic honesty statement, (b) name + class
       + section, (c) repo URL, (d) live GitHub Pages URL
 
@@ -158,12 +164,12 @@ Before submitting in Canvas:
 
 | Criterion (5 pts each) | Target | Current self-grade | Why |
 |---|---|---|---|
-| Portfolio Structure & Organization | 5.0 | **5.0** | All sections present, intuitive nav, polished GH Pages, capstone-banner sets context |
+| Portfolio Structure & Organization | 5.0 | **5.0** | All sections present, intuitive nav, polished GH Pages (live verified), capstone-banner sets context |
 | Content Quality & Breadth | 5.0 | **5.0** | 8 entries, all fields, badges visible, composition exceeds floor, both group projects (capstone + Hydreon) have personal-contribution callouts |
 | Interview-Ready Narratives | 5.0 | **5.0** | 3 SOAR entries with detail, 2 failure stories, About Me hits the ACM pattern explicitly |
 | Reflection Content / Integrative Growth | 5.0 | **5.0** | 1194 words, 4 disciplines named, 4 portfolio examples, capstone failure story doubled in essay |
 | Professional Development & Writing Quality | 5.0 | **5.0** | Polished, voice-consistent, interview-framed examples |
-| **Total / 25** | **25** | **25.0** (subject to deploy verification) | |
+| **Total / 25** | **25** | **25.0** (deploy verified live) | |
 
 ---
 
@@ -178,4 +184,6 @@ Before submitting in Canvas:
 | 2026-05-18 | Owner | Selected reflection theme (automation/ethics), failure story (eBay rate-limit), interdisciplinary second (Honey Smitten), repo strategy (`cisc480-portfolio` project page), section 02 |
 | 2026-05-18 | Owner | Provided full capstone YAML brief + 5 screenshots (only 01/04/05 used; 02/03 omitted due to real emails) |
 | 2026-05-18 | Build agent (with owner-provided detail) | A8 closed: Hydreon `myContribution` rewritten to QA-checklist authoring + adventure-map builds (One Block Challenge islands + cube-world rotating-gravity map); description updated to clarify Lifeboat as a Hydreon Corporation sub-brand |
+| 2026-05-20 | Audit agent (owner-prompted) | Repo + site audit against the May 20 PDF. Found that the `cisc480-portfolio` repo had never been created and the live URL was 404; the legacy user-page repo was serving the submission HTML but with all asset/nav links pointing to a non-existent `/cisc480-portfolio/` subpath. Content was rubric-complete; only the deployment plumbing was missing. |
+| 2026-05-20 | Bootstrap agent | Executed the §2 item #1 plan ("1A"). Preserved post-baseline redesign WIP as commit `8b09319` on `redesign/scene-transitions` (pushed to legacy origin). Switched to `main` (`b748233`, clean tree). Created public repo `FlamingMachTurtle/cisc480-portfolio` via `gh repo create`. Added second git remote `cisc480` (kept `origin` pointing at the legacy user-page repo). Pushed `main` and tag `submission-2026-05-20`. Enabled Pages via `gh api PUT /repos/.../pages -f build_type=workflow`. Watched the auto-triggered deploy workflow to green (build 16s, deploy 10s). Verified all 4 routes + sampled assets return 200 against <https://flamingmachturtle.github.io/cisc480-portfolio/>. |
 | | | |
