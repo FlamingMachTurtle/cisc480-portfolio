@@ -3,11 +3,9 @@ sortOrder: 5
 category: cs
 title: 90-Day Development Challenge
 description: >-
-  A self-imposed challenge to build a small interactive project every day for
-  90 days, focused on rapid prototyping and breadth over polish. The published
-  showcase lets visitors actually click and play with what got built, instead
-  of just reading about it. Keywords: rapid prototyping, daily build challenge,
-  WebGL, Three.js, JavaScript, creative coding, self-directed learning.
+  A self-imposed challenge to build a small interactive project every day
+  for 90 days — rapid prototyping, breadth over polish. The published
+  showcase lets visitors click and play with what got built.
 tech:
   - WebGL
   - Three.js

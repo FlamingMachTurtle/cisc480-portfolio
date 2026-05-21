@@ -251,9 +251,24 @@ a:focus-visible {
 
 /* Main */
 .main {
+	/* Exposed so leading hero bands can pull themselves up under the
+	   sticky header (otherwise the transparent header sits over the
+	   white main-padding band and its white text disappears). See
+	   .hero-scene rule in HeroScene.astro. */
+	--main-padding-top: var(--space-xl);
+	/* Sticky-header height in flow (nav padding + line-height +
+	   bottom-border). Pages with a leading hero subtract this on the
+	   hero so the dark band extends up under the transparent header.
+	   This fallback is intentionally a hair larger than the measured
+	   desktop height (≈ 3.36rem) so we never leave a white sliver if
+	   the JS measurement (BaseLayout.astro) hasn't run yet (first
+	   paint, before-font-swap, or JS disabled). On nav-wrap-aware
+	   mobile widths the JS measurement bumps it further. */
+	--header-overlap: 4.25rem;
+
 	max-width: var(--max-width);
 	margin: 0 auto;
-	padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+	padding: var(--main-padding-top) var(--space-lg) var(--space-2xl);
 	min-height: 60vh;
 }
 .main:focus { outline: none; }

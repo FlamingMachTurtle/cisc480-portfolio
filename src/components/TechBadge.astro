@@ -1,0 +1,96 @@
+---
+/**
+ * TechBadge — pill that pairs a TechIcon with a label.
+ *
+ * Default state: monochrome icon + muted label. Hover state: icon shifts
+ * to its brand hex (exposed by <TechIcon /> as `--brand`) and the badge
+ * border darkens. Falls back to a text-only badge for tech names with
+ * no registered icon (so abstract skills like "Inquiry-based questioning"
+ * still render cleanly).
+ *
+ * Variants:
+ *   - `chip` (default) — small pill, used inside ProjectCard tech list
+ *   - `block` — larger card-style chip with label below the icon, used
+ *     in the home Skills grid for a tech-stack-style lockup
+ */
+import TechIcon from './TechIcon.astro';
+import { resolveTechIcon } from '../lib/tech-icons';
+
+interface Props {
+	name: string;
+	variant?: 'chip' | 'block';
+	class?: string;
+}
+
+const { name, variant = 'chip', class: className } = Astro.props;
+const icon = resolveTechIcon(name);
+const display = icon?.title ?? name;
+---
+
+<span class:list={['tech-badge', `tech-badge--${variant}`, { 'tech-badge--no-icon': !icon }, className]}>
+	{icon && (
+		<span class="tech-badge__icon" aria-hidden="true">
+			<TechIcon name={name} size={variant === 'block' ? '1.5rem' : '1em'} />
+		</span>
+	)}
+	<span class="tech-badge__label">{display}</span>
+</span>
+
+<style>
+	.tech-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2xs);
+		font-size: var(--fs-xs);
+		padding: 0.25rem 0.55rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-pill);
+		color: var(--color-text-muted);
+		white-space: nowrap;
+		transition: color 0.18s ease, border-color 0.18s ease,
+			background-color 0.18s ease, transform 0.18s ease;
+	}
+	.tech-badge :global(.tech-icon) {
+		color: var(--color-text-subtle);
+		transition: color 0.18s ease;
+	}
+
+	/* Hover — badge picks up more contrast and the icon swaps to its
+	   brand hex (exposed by <TechIcon /> as `--brand` on the inline svg). */
+	.tech-badge:hover {
+		border-color: var(--color-border-strong);
+		background: var(--color-bg);
+		color: var(--color-text);
+	}
+	.tech-badge:hover :global(.tech-icon) {
+		color: var(--brand, var(--color-text));
+	}
+
+	/* Block variant: stacked icon + label, slightly bigger touch target. */
+	.tech-badge--block {
+		flex-direction: column;
+		gap: var(--space-2xs);
+		padding: var(--space-md) var(--space-sm);
+		border-radius: var(--radius-md);
+		font-size: var(--fs-2xs);
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		min-width: 5.5rem;
+		text-align: center;
+	}
+	.tech-badge--block .tech-badge__icon {
+		font-size: 1.5rem;
+		line-height: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.tech-badge--block:hover {
+		transform: translateY(-2px);
+	}
+
+	/* No-icon fallback: drops the icon slot entirely and renders pure text. */
+	.tech-badge--no-icon .tech-badge__icon { display: none; }
+</style>

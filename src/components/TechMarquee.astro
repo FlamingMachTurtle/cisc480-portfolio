@@ -1,22 +1,25 @@
 ---
 /**
  * TechMarquee — infinite-scroll horizontal lockup of the tech stack
- * used across projects. Inspired by the user's "Amine" reference site
- * and react-bits' Logo Loop component. CSS-only (no React, no JS),
+ * used across projects. Inspired by the user's reference site and
+ * react-bits' Logo Loop component. CSS-only (no React, no JS),
  * pause-on-hover, prefers-reduced-motion stops it.
  *
- * The list is duplicated once in the markup and animated by
- * `translateX(-50%)` so the loop seam is invisible. Speed is set
- * via the --duration CSS variable on the wrapper.
+ * Each item is rendered through <TechBadge> with the brand SVG icon
+ * so the marquee actually doubles as a logo strip — names that have
+ * a registered icon show the brand logo (monochrome, brand-color on
+ * hover); names without an icon render as text-only badges in the
+ * same pill shape so the row stays visually coherent.
  *
- * Contents render as Geist Mono small-caps tags separated by middle
- * dots — same convention as the home Skills definition list, so
- * the marquee reads as a continuous extension of that voice rather
- * than a third visual style.
+ * The list is duplicated once in the markup and animated by
+ * `translateX(-50%)` so the loop seam is invisible. Speed is set via
+ * the --duration CSS variable on the wrapper.
  */
+import TechBadge from './TechBadge.astro';
+
 interface Props {
 	items?: string[];
-	/** Seconds per full loop. Lower = faster. Default 40s. */
+	/** Seconds per full loop. Lower = faster. Default 50s. */
 	duration?: number;
 	label?: string;
 }
@@ -24,10 +27,10 @@ interface Props {
 const {
 	items = [
 		'TypeScript', 'React', 'Astro', 'Next.js', 'Node.js',
-		'Python', 'Java', 'Swift / SwiftUI', 'SQL',
-		'Supabase / Postgres', 'eBay Trading API', 'QuickBooks Online',
-		'Google Sheets API', 'Power BI / DAX', 'GSAP', 'Framer Motion',
-		'Vercel', 'Git / GitHub Actions',
+		'Python', 'Java', 'Swift', 'SwiftUI', 'SQL',
+		'Supabase', 'Postgres', 'eBay Trading API', 'QuickBooks Online',
+		'Google Sheets', 'GSAP', 'Framer Motion',
+		'Vercel', 'Git', 'GitHub Actions', 'Vite',
 	],
 	duration = 50,
 	label = 'Stack in rotation',
@@ -43,13 +46,13 @@ const {
 	<div class="marquee" style={`--duration: ${duration}s`}>
 		<div class="marquee__track" aria-hidden="false">
 			<ul class="marquee__row">
-				{items.map((it) => <li>{it}</li>)}
+				{items.map((it) => <li><TechBadge name={it} /></li>)}
 			</ul>
 			{/* Duplicate the row once so the translateX(-50%) loop
 			    seam is invisible. The duplicate is hidden from
 			    assistive tech to avoid double announcements. */}
 			<ul class="marquee__row" aria-hidden="true">
-				{items.map((it) => <li>{it}</li>)}
+				{items.map((it) => <li><TechBadge name={it} /></li>)}
 			</ul>
 		</div>
 	</div>
@@ -119,37 +122,17 @@ const {
 
 	.marquee__row {
 		display: flex;
-		gap: var(--space-xl);
+		gap: var(--space-md);
 		list-style: none;
 		margin: 0;
-		padding: 0 var(--space-lg);
+		padding: 0 var(--space-md);
 		flex-shrink: 0;
+		align-items: center;
 	}
 
 	.marquee__row li {
-		font-family: var(--font-mono);
-		font-size: var(--fs-sm);
-		font-weight: 500;
-		color: var(--color-text-muted);
-		white-space: nowrap;
-		font-feature-settings: "tnum" on, "ss01" on, "ss03" on;
-		display: flex;
-		align-items: center;
-		transition: color 0.2s ease;
-	}
-	.marquee__row li:not(:last-child)::after {
-		content: '';
-		display: inline-block;
-		width: 4px;
-		height: 4px;
-		margin-left: var(--space-xl);
-		margin-right: calc(-1 * var(--space-xl));
-		border-radius: 50%;
-		background: var(--color-border-strong);
+		display: inline-flex;
 		flex-shrink: 0;
-	}
-	.marquee__row li:hover {
-		color: var(--color-text);
 	}
 
 	@keyframes marquee-scroll {

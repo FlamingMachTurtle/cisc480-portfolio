@@ -1,5 +1,6 @@
 ---
 import { withBase } from '../lib/url';
+import TechBadge from './TechBadge.astro';
 
 interface Props {
 	title: string;
@@ -49,7 +50,7 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		{tech.length > 0 && (
 			<ul class="card-tech" aria-label="Tech and skills">
 				{tech.map((t) => (
-					<li>{t}</li>
+					<li><TechBadge name={t} /></li>
 				))}
 			</ul>
 		)}
@@ -87,25 +88,37 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		grid-template-columns: 1fr 1fr;
 		gap: 0;
 		background: var(--color-surface-raised);
-		border: 1px solid var(--color-border);
+		/* Stronger baseline border (slate-300) + a baseline shadow so
+		   the card pops off the white page bg even at rest, and the
+		   contrast between focused and inactive timeline states reads
+		   clearly. Was 1px var(--color-border) (slate-200) which
+		   blended into #ffffff page bg. */
+		border: 1px solid var(--color-border-strong);
 		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-2);
 		overflow: hidden;
 		transition: box-shadow 0.25s ease, border-color 0.25s ease,
 			transform 0.25s ease;
 		will-change: transform;
 	}
-	/* Hover lift — the editorial replacement for the old 3px amber
-	   left rule on .card--capstone. Importance is now marked by the
-	   outlined "CISC480 CAPSTONE" badge alone, and every card gets
-	   the same subtle translate + shadow promotion on hover. */
+	/* Hover lift — every card gets a translate + stronger shadow
+	   promotion on hover so clickability is unambiguous. */
 	.card:hover {
 		transform: translateY(-3px);
 		box-shadow: var(--shadow-3);
-		border-color: var(--color-border-strong);
+		border-color: var(--color-text-subtle);
 	}
 	.card:focus-within {
 		box-shadow: var(--shadow-3);
 		border-color: var(--color-accent);
+	}
+	/* When the parent project group is the timeline-active item, the
+	   card border picks up the accent so the focus state is visible
+	   without scrolling — the user's "things need more distinction"
+	   ask answered explicitly. */
+	:global(.project-group--active) .card {
+		border-color: var(--color-text-subtle);
+		box-shadow: var(--shadow-3);
 	}
 	.card--reversed { direction: rtl; }
 	.card--reversed > * { direction: ltr; }
@@ -162,13 +175,7 @@ const categoryLabel: Record<NonNullable<Props['category']>, string> = {
 		gap: var(--space-2xs);
 	}
 	.card-tech li {
-		font-size: var(--fs-xs);
-		padding: 0.2rem 0.6rem;
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-pill);
-		color: var(--color-text-muted);
-		white-space: nowrap;
+		display: inline-flex;
 	}
 
 	.card-keywords {

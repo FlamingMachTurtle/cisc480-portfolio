@@ -3,16 +3,11 @@ sortOrder: 6
 category: outside-cs
 title: AVID Tutoring — Service Learning
 description: >-
-  As an AVID tutor (Fall 2025 – Present), I provide 1:1 and small-group academic
-  support to middle-school students across multiple school sites. I use
-  inquiry-based questioning to build independent problem-solving rather than
-  just handing over answers, reinforce planning / organization / self-advocacy
-  routines, and adapt my style to each classroom's culture and expectations.
-  This is an explicitly outside-CS entry — it sits in education and service
-  learning — but it's also the work that most reshapes how I think about
-  building software for non-technical users. Keywords: service learning,
-  education, AVID, inquiry-based instruction, mentorship, Socratic method,
-  classroom management.
+  AVID tutor (Fall 2025 – Present) providing 1:1 and small-group support to
+  middle-schoolers across multiple sites. I use inquiry-based questioning to
+  build independent problem-solving instead of handing over answers, and
+  adapt to each classroom's culture. An explicitly outside-CS entry — but
+  the work that most reshapes how I build software for non-technical users.
 tech:
   - Inquiry-based questioning
   - 1:1 instruction

@@ -79,21 +79,61 @@ const startsWithBase = (segment: string) => pathname.startsWith(withBase(segment
 		</script>
 
 		{/*
-		 * Sticky-header opacity controller.
-		 * Toggles `.is-scrolled` once the user has scrolled past the
-		 * top hero band (or 80px if no hero is present). Re-bound on
-		 * every Astro page-load event so it survives view transitions.
+		 * Sticky-header opacity controller + dynamic header-overlap.
+		 *
+		 * (1) Toggles `.is-scrolled` once the user has scrolled past
+		 *     the top hero band (or 80px if no hero is present).
+		 * (2) Measures the actual header height and writes it to a
+		 *     `--header-overlap` CSS custom property on every .main.
+		 *     This is what lets the leading `<HeroScene>` pull itself
+		 *     up *exactly* under the sticky header — no white sliver
+		 *     gap, regardless of font load state (Geist Variable
+		 *     swaps after first paint and the line metrics shift
+		 *     ~1–2px), nav-wrap on mobile (the nav uses
+		 *     flex-wrap: wrap and grows ~2x tall when links wrap),
+		 *     viewport resize, or user zoom. CSS provides a safe
+		 *     4.25rem fallback (see .main rule in global.css) so the
+		 *     band is gap-free even before this script runs.
+		 *
+		 * Re-bound on every astro:page-load so view transitions don't
+		 * leak listeners.
 		 */}
 		<script is:inline>
 			(function () {
-				const HEADER_OPAQUE_AT = 'header-opaque-at';
 				let cleanup = null;
+
+				function writeHeaderOverlap(header) {
+					/* Round up + small buffer so sub-pixel line-height
+					   doesn't leave a 1px sliver. */
+					const px = Math.ceil(header.getBoundingClientRect().height) + 2;
+					const mains = document.querySelectorAll('.main');
+					mains.forEach((m) => {
+						m.style.setProperty('--header-overlap', px + 'px');
+					});
+				}
 
 				function bind() {
 					if (cleanup) cleanup();
 					const header = document.querySelector('.site-header');
 					if (!header) return;
-					if (header.dataset.staticHeader === 'true') return;
+
+					writeHeaderOverlap(header);
+					const isStatic = header.dataset.staticHeader === 'true';
+
+					/* Re-measure on events that can change header
+					   height: font swap (Geist Variable), viewport
+					   resize, orientation change. */
+					const remeasure = () => writeHeaderOverlap(header);
+					window.addEventListener('resize', remeasure, { passive: true });
+					if (document.fonts && document.fonts.ready) {
+						document.fonts.ready.then(() => writeHeaderOverlap(header));
+					}
+
+					/* Static-header pages don't need the scroll toggle. */
+					if (isStatic) {
+						cleanup = () => window.removeEventListener('resize', remeasure);
+						return;
+					}
 
 					const hero = document.querySelector('.hero-scene');
 					const threshold = hero
@@ -106,7 +146,10 @@ const startsWithBase = (segment: string) => pathname.startsWith(withBase(segment
 					};
 					onScroll();
 					window.addEventListener('scroll', onScroll, { passive: true });
-					cleanup = () => window.removeEventListener('scroll', onScroll);
+					cleanup = () => {
+						window.removeEventListener('scroll', onScroll);
+						window.removeEventListener('resize', remeasure);
+					};
 				}
 
 				document.addEventListener('astro:page-load', bind);

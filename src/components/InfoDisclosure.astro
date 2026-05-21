@@ -1,0 +1,239 @@
+---
+/**
+ * InfoDisclosure — collapsed-by-default editorial section.
+ *
+ * Same visual language as `<InfoPanel />` (hairline rule above + numbered
+ * small-caps kicker), but the body is hidden behind a native `<details>`
+ * element. Clicking the header expands; clicking again collapses.
+ *
+ * Used for the "What I learned" failure-story section: the content is
+ * dense and most readers don't need it on first scan, so we save the
+ * vertical real estate and let people opt in.
+ *
+ * Why <details>:
+ *   - Zero JS. Native HTML, ships in every browser since IE never
+ *     supported it (Chrome 12, FF 49, Safari 6).
+ *   - Native accessibility (announced as a disclosure widget; Enter /
+ *     Space toggles; the open state is exposed to assistive tech).
+ *   - Animatable open/close via CSS (interpolate-size + display:
+ *     transition + ::details-content trick) — degrades to instant
+ *     toggle on browsers that don't support the new CSS yet.
+ *
+ * Tone is identical to InfoPanel: tinting affects label color only,
+ * never background.
+ */
+
+interface Props {
+	tone?: 'neutral' | 'accent' | 'muted';
+	label: string;
+	sublabel?: string;
+	index?: string;
+	hint?: string;
+	open?: boolean;
+}
+const {
+	tone = 'muted',
+	label,
+	sublabel,
+	index,
+	hint = 'Click to expand',
+	open = false,
+} = Astro.props;
+---
+
+<details class:list={['info-disclosure', `info-disclosure--${tone}`]} open={open}>
+	<summary class="info-disclosure__head">
+		{index && <span class="info-disclosure__index mono">{index}</span>}
+		{index && <span class="info-disclosure__sep" aria-hidden="true">/</span>}
+		<span class="info-disclosure__label">{label}</span>
+		{sublabel && <span class="info-disclosure__sub">{sublabel}</span>}
+		<span class="info-disclosure__hint mono" aria-hidden="true">{hint}</span>
+		<span class="info-disclosure__chevron mono" aria-hidden="true">↓</span>
+	</summary>
+	<div class="info-disclosure__body">
+		<slot />
+	</div>
+</details>
+
+<style>
+	.info-disclosure {
+		--label-color: var(--color-text-subtle);
+		margin-top: var(--space-xl);
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--color-border);
+	}
+	.info-disclosure--neutral { --label-color: var(--color-text); }
+	.info-disclosure--accent  { --label-color: var(--color-accent); }
+	.info-disclosure--muted   { --label-color: var(--color-text-subtle); }
+
+	.info-disclosure__head {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-xs);
+		flex-wrap: wrap;
+		margin-bottom: var(--space-md);
+		cursor: pointer;
+		list-style: none;
+		user-select: none;
+		padding: var(--space-xs) var(--space-sm);
+		margin-left: calc(-1 * var(--space-sm));
+		margin-right: calc(-1 * var(--space-sm));
+		border-radius: var(--radius-sm);
+		transition: color 0.2s ease, background-color 0.2s ease;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.info-disclosure__head::-webkit-details-marker { display: none; }
+	.info-disclosure__head::marker { content: ''; }
+
+	/* Subtle bg on hover so the affordance reads — the user's
+	   "interactions need more distinction" ask. */
+	.info-disclosure__head:hover { background: var(--color-surface); }
+	.info-disclosure__head:hover .info-disclosure__label { color: var(--color-text); }
+	.info-disclosure__head:hover .info-disclosure__chevron { color: var(--color-accent); transform: translateY(2px); }
+	.info-disclosure__head:hover .info-disclosure__hint { color: var(--color-accent); opacity: 1; }
+
+	.info-disclosure__head:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 4px;
+		border-radius: 2px;
+	}
+
+	.info-disclosure__index {
+		font-size: var(--fs-2xs);
+		font-weight: 600;
+		font-feature-settings: "tnum" on, "ss03" on;
+		color: var(--color-text-subtle);
+		letter-spacing: 0.04em;
+	}
+	.info-disclosure__sep {
+		font-size: var(--fs-2xs);
+		color: var(--color-text-subtle);
+		opacity: 0.6;
+	}
+	.info-disclosure__label {
+		font-size: var(--fs-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-caps);
+		color: var(--label-color);
+		transition: color 0.2s ease;
+	}
+	.info-disclosure__sub {
+		font-size: var(--fs-xs);
+		color: var(--color-text-muted);
+		font-style: italic;
+	}
+	.info-disclosure__hint {
+		margin-left: auto;
+		font-size: var(--fs-2xs);
+		color: var(--color-text-subtle);
+		font-feature-settings: "tnum" on, "ss03" on;
+		letter-spacing: 0.04em;
+		opacity: 0.7;
+		transition: opacity 0.2s ease;
+	}
+	.info-disclosure__chevron {
+		font-size: var(--fs-xs);
+		color: var(--color-text-subtle);
+		transition: transform 0.2s ease, color 0.2s ease;
+		display: inline-block;
+	}
+
+	/* Open state: rotate chevron, hide hint, swap label color into accent. */
+	.info-disclosure[open] .info-disclosure__chevron {
+		transform: rotate(180deg);
+		color: var(--color-text);
+	}
+	.info-disclosure[open] .info-disclosure__hint {
+		opacity: 0;
+		visibility: hidden;
+	}
+	.info-disclosure[open] .info-disclosure__label {
+		color: var(--color-text);
+	}
+
+	@media (max-width: 640px) {
+		.info-disclosure__sub {
+			flex-basis: 100%;
+		}
+		.info-disclosure__hint {
+			display: none; /* on mobile the chevron is enough */
+		}
+	}
+
+	/* Body — same typography as InfoPanel. */
+	.info-disclosure__body :global(*:first-child) { margin-top: 0; }
+	.info-disclosure__body :global(*:last-child)  { margin-bottom: 0; }
+
+	.info-disclosure__body :global(dl.kv-stack) {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-md);
+		margin: 0;
+	}
+	.info-disclosure__body :global(dl.kv-stack > div) {
+		display: grid;
+		grid-template-columns: 1.75rem 1fr;
+		column-gap: var(--space-sm);
+		row-gap: var(--space-2xs);
+	}
+	.info-disclosure__body :global(dl.kv-stack > div::before) {
+		content: attr(data-step);
+		grid-column: 1;
+		grid-row: 1 / 3;
+		font-family: var(--font-mono);
+		font-size: var(--fs-2xs);
+		font-weight: 500;
+		font-feature-settings: "tnum" on;
+		color: var(--color-text-subtle);
+		padding-top: 2px;
+		letter-spacing: 0.04em;
+	}
+	.info-disclosure__body :global(dl.kv-stack dt) {
+		grid-column: 2;
+		font-size: var(--fs-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-caps);
+		color: var(--color-text);
+	}
+	.info-disclosure__body :global(dl.kv-stack dd) {
+		grid-column: 2;
+		margin: 0;
+		font-size: var(--fs-sm);
+		line-height: var(--lh-snug);
+		color: var(--color-text-muted);
+	}
+
+	/* Smooth animated open/close where supported (Chrome 129+, Safari 18.2+). */
+	@supports (interpolate-size: allow-keywords) {
+		.info-disclosure {
+			interpolate-size: allow-keywords;
+		}
+		.info-disclosure::details-content {
+			block-size: 0;
+			overflow: clip;
+			opacity: 0;
+			transition: block-size 0.32s ease, content-visibility 0.32s allow-discrete,
+				opacity 0.24s ease;
+		}
+		.info-disclosure[open]::details-content {
+			block-size: auto;
+			opacity: 1;
+		}
+	}
+
+	/* Reduced motion: disable chevron rotation transition. */
+	@media (prefers-reduced-motion: reduce) {
+		.info-disclosure__chevron,
+		.info-disclosure__label,
+		.info-disclosure__hint,
+		.info-disclosure__head:hover .info-disclosure__chevron {
+			transition: none;
+			transform: none;
+		}
+		.info-disclosure[open] .info-disclosure__chevron {
+			transform: rotate(180deg);
+		}
+	}
+</style>

@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroScene from '../components/HeroScene.astro';
 import TechMarquee from '../components/TechMarquee.astro';
+import TechBadge from '../components/TechBadge.astro';
+import StatStrip from '../components/StatStrip.astro';
 import ScrollReveal from '../components/react/ScrollReveal.tsx';
 import { withBase } from '../lib/url';
 
@@ -11,11 +13,16 @@ const headshot = withBase('/images/headshot.jpg');
 //   [CATEGORY in small-caps left column] | [items separated by · in mono right column]
 // The previous implementation was a 2x2 grid of bordered "skill-group"
 // cards (a Tailwind-UI tag-set tell — see redesign/audit/ai-tells.md).
-const skills: { label: string; items: string[] }[] = [
-	{ label: 'Languages',                items: ['Python','Java','JavaScript','TypeScript','SQL','Swift','HTML / CSS'] },
-	{ label: 'Frameworks & Tools',       items: ['React','Node.js','Astro','SwiftUI','REST APIs','eBay Trading API','QuickBooks Online','Google Sheets automation','Power BI / DAX','Git / GitHub Actions'] },
-	{ label: 'Professional Competencies',items: ['Client communication','Requirements gathering','Rapid prototyping','QA & release coordination','1:1 & small-group instruction','Inquiry-based coaching','Operations & reporting','Documentation & handoffs'] },
-	{ label: 'Human Languages',          items: ['English (native)','Japanese (intermediate)','Hebrew (basic)'] },
+// `mode` controls how each row renders:
+//   - 'badges': icon+label pills via <TechBadge /> (real brand SVGs from
+//     `simple-icons`, monochrome by default, brand-color on hover)
+//   - 'mono':   small-caps mono dot-separated list (the editorial baseline
+//     for non-iconic skills like "Inquiry-based coaching")
+const skills: { label: string; items: string[]; mode: 'badges' | 'mono' }[] = [
+	{ label: 'Languages',                mode: 'badges', items: ['Python','Java','JavaScript','TypeScript','SQL','Swift','HTML / CSS'] },
+	{ label: 'Frameworks & Tools',       mode: 'badges', items: ['React','Node.js','Astro','SwiftUI','Vite','Supabase','Vercel','GSAP','Framer Motion','Git','GitHub Actions','eBay Trading API','QuickBooks Online','Google Sheets'] },
+	{ label: 'Professional Competencies',mode: 'mono',   items: ['Client communication','Requirements gathering','Rapid prototyping','QA & release coordination','1:1 & small-group instruction','Inquiry-based coaching','Operations & reporting','Documentation & handoffs'] },
+	{ label: 'Human Languages',          mode: 'mono',   items: ['English (native)','Japanese (intermediate)','Hebrew (basic)'] },
 ];
 
 const exploreLinks: { href: string; label: string; desc: string }[] = [
@@ -43,8 +50,8 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 			</div>
 			<div class="hero-text">
 				<p class="lead">
-					I turn ideas into working tools fast, especially for small businesses and people who don't usually get
-					custom software built for them. My longer-term goal is to contribute to medical and mental-health tech.
+					I ship working tools fast — especially for small businesses and people who don't usually get custom
+					software built for them.
 				</p>
 				<p class="contact-line">
 					<a href="mailto:eligoldberger5@gmail.com">eligoldberger5@gmail.com</a>
@@ -60,48 +67,74 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 			</div>
 		</header>
 
-		<!-- ========== ABOUT ME (ACM "unique combination") ==========
-		     v2: replaces the two bordered combo-cards with a typographic
-		     two-column comparison and a vertical hairline divider.
-		     v3: wrapped in <ScrollReveal> so it fades up on scroll. -->
+		<!-- ========== ABOUT ==========
+		     V6.1 tone-down: dropped the pull quote, dropped the
+		     CS↔LA paired/parallel split, and flattened to a single
+		     hairline-separated list of independent factual bullets.
+		     Self-claim adjectives stripped from each line (no "tight
+		     deadlines", no "rigor", no "comfort with ambiguity"); the
+		     closing line is descriptive context, not a value
+		     proposition. See redesign/audit/about-and-stats-v6.md
+		     for the reasoning behind the revision.
+
+		     V6.2 fix (May 20): restored a short editorial lead at the
+		     top of the section that explicitly answers the rubric's
+		     "Why should we hire you?" using the ACM Interview Speak
+		     unique-combination pattern (CS skills + liberal-arts
+		     strengths). This is the framing the PDF rubric scores
+		     under "Interview-Ready Narratives", and the V6.1
+		     bullets-only treatment left it implicit. The bullets
+		     below remain unchanged — they are the evidence, the new
+		     lead is the claim. -->
 		<ScrollReveal client:load>
 		<section class="about-section" id="about" aria-labelledby="about-heading">
 			<h2 id="about-heading">About</h2>
-			<p class="about-question">
-				<strong>Why should you hire me?</strong>
-				Because I bring a unique combination of CS and liberal-arts strengths
-				that's pretty hard to find together in one person.
+
+			<p class="about-claim">
+				<span class="about-claim__q">Why should we hire you?</span>
+				I'm not only a computer-science major who ships production automation
+				against real APIs (Python, React + Supabase, SwiftUI, image pipelines) —
+				I'm also a small-business operator (Honey Smitten, my own LLC Big Chuck
+				Data), an AVID inquiry-based tutor, a Math minor, and someone who has
+				worked across English, intermediate Japanese, and basic Hebrew. That
+				combination is why I'm comfortable in the room where the requirements
+				aren't written down yet — small-business owners, classrooms, and
+				municipal staff — and why my code carries the ethical guardrails
+				(deactivate-by-default, audit logs, dry-run modes, rate-limit-aware
+				queues) those users actually need.
 			</p>
 
-			<div class="combination">
-				<div class="combo">
-					<span class="combo__label">CS strengths</span>
-					<ul>
-						<li>Rapid Python automation against real REST/API constraints (rate limits, auth, idempotency).</li>
-						<li>End-to-end shipping of production tools under tight client deadlines.</li>
-						<li>SwiftUI / iOS for native interfaces; React, Node, and Astro on the web.</li>
-						<li>Image processing pipelines, scheduled services, and small-business data workflows.</li>
-					</ul>
-				</div>
-				<div class="combo">
-					<span class="combo__label">Liberal-arts strengths</span>
-					<ul>
-						<li>1:1 and small-group instruction through AVID — I can debug an API and then explain it to a 7th-grader.</li>
-						<li>Intermediate Japanese and basic Hebrew — comfort sitting with ambiguity and other ways of thinking.</li>
-						<li>Math minor rigor: I can reason about edge cases, model failure modes, and check my own work.</li>
-						<li>Operations &amp; client communication from running my own LLC and supporting Honey Smitten through trade shows, QuickBooks, and reporting.</li>
-					</ul>
-				</div>
-			</div>
+			<ul class="about-list">
+				<li>Builds and ships tools to paying clients.</li>
+				<li>Python automation against real APIs &mdash; rate limits, auth, idempotency.</li>
+				<li>SwiftUI / iOS native; React, Node, Astro on the web.</li>
+				<li>Image pipelines, scheduled services, data workflows.</li>
+				<li>Operations and client work for my LLC and Honey Smitten.</li>
+				<li>AVID 1:1 tutoring; middle-schoolers across multiple sites.</li>
+				<li>Math minor; intermediate Japanese, basic Hebrew.</li>
+			</ul>
 
 			<p class="about-summary">
-				<span class="kicker mono">Net-net</span>
-				I'm a developer who can talk to non-technical clients without losing them,
-				ship reliable automation that respects real-world constraints, and treat the people I build for —
-				whether they're store owners, middle-school students, or future patients — with the kind of care
-				the University of St. Thomas tradition expects.
+				Most of my work so far has been for small-business owners, AVID classrooms, and
+				a sustainability dashboard pilot.
 			</p>
 		</section>
+		</ScrollReveal>
+
+		<!-- ========== BY THE NUMBERS ==========
+		     V6 add: a small stat strip with four real metrics that
+		     count up from 0 when scrolled into view. SSR-rendered
+		     final values; no animation under prefers-reduced-motion. -->
+		<ScrollReveal client:load>
+		<StatStrip
+			eyebrow="By the numbers"
+			stats={[
+				{ value: 22, label: 'Widgets', sublabel: 'GreenStep dashboard' },
+				{ value: 100, suffix: '%', label: 'Success rate', sublabel: 'eBay pipeline, post-redesign' },
+				{ value: 8, label: 'Projects shipped', sublabel: 'On this site' },
+				{ value: 21, label: 'Months running', sublabel: 'Big Chuck Data LLC' },
+			]}
+		/>
 		</ScrollReveal>
 
 		<!-- ========== SKILLS ==========
@@ -113,10 +146,16 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 			<p class="skills-intro">Pulled from coursework, paid work, and service learning.</p>
 
 			<dl class="skills-list">
-				{skills.map(({ label, items }) => (
+				{skills.map(({ label, items, mode }) => (
 					<div class="skills-row">
 						<dt>{label}</dt>
-						<dd class="mono">{items.join('  ·  ')}</dd>
+						{mode === 'badges' ? (
+							<dd class="skills-badges">
+								{items.map((it) => <TechBadge name={it} />)}
+							</dd>
+						) : (
+							<dd class="mono">{items.join('  ·  ')}</dd>
+						)}
 					</div>
 				))}
 			</dl>
@@ -135,10 +174,10 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 		<section class="goals-section" aria-labelledby="goals-heading">
 			<h2 id="goals-heading">Goals</h2>
 			<ul>
-				<li>Keep sharpening rapid-prototyping skills so I can ship useful tools on short deadlines.</li>
-				<li>Grow <strong>Big Chuck Data LLC</strong> into a sustainable consultancy that supports small-business clients end to end without overcharging or over-automating.</li>
-				<li>Move toward contributing to medical and mental-health technology — the spaces where careful, human-centered software matters most.</li>
-				<li>Keep doing service-learning work alongside the technical work, because the two sharpen each other.</li>
+				<li>Keep sharpening rapid-prototyping under short deadlines.</li>
+				<li>Grow <strong>Big Chuck Data LLC</strong> into a small-business consultancy that doesn't overcharge or over-automate.</li>
+				<li>Move toward human-centered software in spaces where care matters.</li>
+				<li>Keep service-learning alongside the technical work — the two sharpen each other.</li>
 			</ul>
 		</section>
 		</ScrollReveal>
@@ -249,94 +288,57 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 	   No card chrome anywhere. The vertical hairline does the
 	   visual separation that the borders used to do. */
 	.about-section { margin-bottom: var(--space-3xl); }
-	.about-question {
+
+	/* ----- "Why should we hire you?" claim -----
+	   Single editorial paragraph that opens the About section with
+	   the ACM unique-combination framing the rubric scores under.
+	   No card chrome — just an emphasized italic question lead-in
+	   followed by body prose. See redesign/audit/about-and-stats-v6.md. */
+	.about-claim {
+		margin: var(--space-md) 0 var(--space-xl);
+		max-width: 56rem;
 		font-size: var(--fs-md);
 		line-height: var(--lh-snug);
-		margin: 0 0 var(--space-xl);
-		color: var(--color-text-muted);
-		max-width: 56rem;
-	}
-	.about-question strong {
 		color: var(--color-text);
-		font-weight: 600;
 	}
-
-	.combination {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: var(--space-2xl);
-		row-gap: var(--space-lg);
-		padding-top: var(--space-md);
-		border-top: 1px solid var(--color-border);
-	}
-	@media (min-width: 641px) {
-		.combination > .combo:first-child {
-			padding-right: var(--space-2xl);
-			border-right: 1px solid var(--color-border);
-		}
-		.combination > .combo:last-child {
-			padding-left: var(--space-2xl);
-			margin-left: calc(-1 * var(--space-2xl));
-		}
-	}
-	@media (max-width: 640px) {
-		.combination { grid-template-columns: 1fr; gap: var(--space-md); }
-	}
-	.combo__label {
+	.about-claim__q {
 		display: block;
 		font-size: var(--fs-2xs);
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-caps);
-		color: var(--color-text);
-		margin-bottom: var(--space-sm);
+		color: var(--color-text-subtle);
+		margin-bottom: var(--space-2xs);
 	}
-	.combo ul {
+
+	/* ----- Flat skills list -----
+	   One bullet per row, hairline rule between rows. No
+	   categorization, no comparison, no inline glyphs. Each line
+	   is a self-contained factual descriptor. */
+	.about-list {
+		list-style: none;
 		margin: 0;
 		padding: 0;
-		list-style: none;
+		max-width: 56rem;
+	}
+	.about-list li {
 		font-size: var(--fs-sm);
 		line-height: var(--lh-snug);
-		color: var(--color-text-muted);
+		color: var(--color-text);
+		padding: var(--space-sm) 0;
+		border-top: 1px solid var(--color-border);
 	}
-	.combo li {
-		margin-bottom: var(--space-xs);
-		padding-left: 0.9rem;
-		position: relative;
-	}
-	.combo li::before {
-		content: '';
-		position: absolute;
-		left: 0;
-		top: 0.55em;
-		width: 0.4rem;
-		height: 1px;
-		background: var(--color-border-strong);
-	}
-	.combo li:last-child { margin-bottom: 0; }
+	.about-list li:last-child { border-bottom: 1px solid var(--color-border); }
 
+	/* ----- Closing line -----
+	   Plain paragraph; no kicker, no drop cap, no special
+	   typography — it's context, not a value proposition. */
 	.about-summary {
 		margin: var(--space-xl) 0 0;
-		padding-top: var(--space-md);
-		border-top: 1px solid var(--color-border);
+		max-width: 56rem;
 		font-size: var(--fs-sm);
 		line-height: var(--lh-base);
-		color: var(--color-text);
-	}
-	.kicker {
-		display: inline;
-		font-size: var(--fs-2xs);
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-caps);
-		color: var(--color-text-subtle);
-		margin-right: var(--space-xs);
-	}
-	.kicker::after {
-		content: '—';
-		margin-left: var(--space-xs);
-		color: var(--color-text-subtle);
-		font-family: var(--font-sans);
+		color: var(--color-text-muted);
 	}
 
 	/* ===== Skills =====
@@ -379,6 +381,12 @@ const exploreLinks: { href: string; label: string; desc: string }[] = [
 		line-height: var(--lh-base);
 		color: var(--color-text-muted);
 		font-feature-settings: "tnum" on, "ss01" on, "ss03" on;
+	}
+	.skills-row dd.skills-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2xs);
+		font-feature-settings: normal;
 	}
 	@media (max-width: 640px) {
 		.skills-row {

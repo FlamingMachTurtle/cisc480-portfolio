@@ -65,7 +65,18 @@ const bgSrc = bgImage ? withBase(bgImage) : undefined;
 		display: flex;
 		align-items: flex-end;
 		min-height: 360px;
-		padding: var(--space-3xl) var(--space-lg) var(--space-2xl);
+		/* Hero pulls itself up under the sticky header so the
+		   transparent nav sits over the dark band (instead of over
+		   the white main-padding band, where the white nav text
+		   becomes invisible). The pulled-up amount is added back as
+		   top padding so the title text still clears the header. */
+		padding:
+			calc(var(--space-3xl) + var(--header-overlap, 3.25rem))
+			var(--space-lg)
+			var(--space-2xl);
+		margin-top: calc(
+			-1 * (var(--main-padding-top, 2rem) + var(--header-overlap, 3.25rem))
+		);
 		margin-bottom: var(--space-xl);
 		background: var(--color-hero-bg);
 		color: var(--color-hero-text);
@@ -152,7 +163,16 @@ const bgSrc = bgImage ? withBase(bgImage) : undefined;
 	@media (max-width: 640px) {
 		.hero-scene {
 			min-height: 280px;
-			padding: var(--space-2xl) var(--space-md) var(--space-lg);
+			/* Keep the header-overlap pull-up calc on mobile too —
+			   otherwise the nav (which can wrap onto a second line
+			   because .nav uses flex-wrap: wrap) leaves a white
+			   sliver above the dark hero band on narrow widths.
+			   Title gets a slightly tighter top padding here since
+			   --space-2xl < --space-3xl. */
+			padding:
+				calc(var(--space-2xl) + var(--header-overlap, 4.25rem))
+				var(--space-md)
+				var(--space-lg);
 		}
 		.hero-scene--tall { min-height: 360px; }
 		.hero-scene__title { font-size: var(--fs-2xl); }

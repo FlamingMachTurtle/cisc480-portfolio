@@ -4,18 +4,12 @@ category: capstone
 title: "Admin Console for Minnesota's GreenStep Sustainability Challenge Program"
 description: >-
   A React + Supabase admin console built with a four-person CISC480 capstone
-  team for the Minnesota Pollution Control Agency, replacing the scattered
-  Excel scoring templates that GreenStep Cities staff had been using to run
-  sustainability challenges (Commissioner's Challenge, Earth Month, Commute
-  Week). Admins launch and edit challenges from reusable templates, assign
-  users to groups, watch live engagement on a customizable drag-and-drop
-  dashboard with 22 widgets, and export filtered participation reports as
-  CSV for leadership. Role-based access (SuperAdmin / Admin / GeneralUser),
-  Supabase magic-link/OTP auth, a global MUI v7 dark theme, and a live
-  mobile preview next to the authoring forms shipped in the v0.10 release.
-  Keywords: admin dashboard, drag-and-drop widgets, role-based access
-  control, Supabase Postgres, CSV reporting, sustainability tracking,
-  responsive design, React architecture and refactoring.
+  team for the Minnesota Pollution Control Agency, replacing the Excel
+  scoring templates GreenStep Cities staff used to run sustainability
+  challenges. Admins launch challenges from templates, assign users to
+  groups, monitor a 22-widget drag-and-drop dashboard, and export CSV
+  participation reports — with role-based access, Supabase magic-link/OTP
+  auth, and a live mobile preview alongside the authoring forms.
 tech:
   - React 19
   - Vite
